@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sist.chodangi.IAdminDAO">
+	<!-- login -->
+	<!-- 성공시 count 1 반환 실패시 0 -->
+	<select id="login" resultType="java.lang.Interger">
+		SELECT COUNT(*) AS COUNT
+		FROM ADMIN
+		WHERE LOGIN_ID = #{login_id}
+		  AND LOGIN_PW = #{login_pw}
+	</select>
+</mapper>
