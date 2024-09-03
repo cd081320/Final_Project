@@ -5,7 +5,7 @@
 <mapper namespace="com.sist.chodangi.IAdminDAO">
 	<!-- login -->
 	<!-- 성공시 count 1 반환 실패시 0 -->
-	<select id="login" resultType="java.lang.Interger">
+	<select id="login" resultType="java.lang.Integer">
 		SELECT COUNT(*) AS COUNT
 		FROM ADMIN
 		WHERE LOGIN_ID = #{login_id}

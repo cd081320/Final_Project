@@ -4,6 +4,9 @@
  */
 package com.sist.chodangi;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -16,6 +19,8 @@ public class LoginController
 	@Autowired
 	private SqlSession sqlSession;
 	
+	// 로그인 폼 요청 페이지
+	// memberType이 없다면 seeker의 로그인 페이지로
 	@RequestMapping(value = "loginform.action")
 	public String loginForm(String memberType)
 	{
@@ -28,8 +33,9 @@ public class LoginController
 		return result;
 	}
 	
+	// 관리자 로그인
 	@RequestMapping(value = "adminlogin.action", method = RequestMethod.POST)
-	public String login(AdminDTO admin)
+	public String adminLogin(AdminDTO admin, HttpServletRequest request)
 	{
 		String result = "";
 		
@@ -38,9 +44,17 @@ public class LoginController
 		int loginResult =  dao.login(admin);
 		
 		if (loginResult == 1)
-			result = "/admin/Main";
+		{
+			// 로그인 성공
+			// 로그인 성공시 관리자임을 증명하는 값을 세션에 남김
+			HttpSession session = request.getSession();
+			session.setAttribute("admin", "");
+			
+			result = "redirect:adminmain.action";
+		}
 		else
 		{
+			// 로그인 실패
 			result = "redirect:loginform.action?memberType=admin";
 		}
 		
