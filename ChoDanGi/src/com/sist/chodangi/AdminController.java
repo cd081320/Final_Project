@@ -3,7 +3,6 @@
  */
 package com.sist.chodangi;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.ibatis.session.SqlSession;
@@ -18,11 +17,9 @@ public class AdminController
 	private SqlSession sqlSession;
 	
 	@RequestMapping(value = "adminmain.action")
-	public String mainPage(HttpServletRequest request)
+	public String mainPage(HttpSession session)
 	{
 		String result = "";
-		
-		HttpSession session = request.getSession();
 		
 		if (session.getAttribute("admin") == null)
 		{

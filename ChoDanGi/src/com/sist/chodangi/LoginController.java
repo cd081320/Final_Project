@@ -20,8 +20,9 @@ public class LoginController
 	private SqlSession sqlSession;
 	
 	// 로그인 폼 요청 페이지
-	// memberType이 없다면 seeker의 로그인 페이지로
-	@RequestMapping(value = "loginform.action")
+	// 만약 memberType이 없다면 seeker의 로그인 페이지로
+	// 만약 이미 로그인이 되어 있다면 되어있는 곳으로
+	@RequestMapping(value = "/loginform.action")
 	public String loginForm(String memberType)
 	{
 		String result = "";
@@ -33,9 +34,22 @@ public class LoginController
 		return result;
 	}
 	
+	// 구직자 회원가입 폼 요청 페이지
+	@RequestMapping(value = "seekersignupform.action")
+	public String seekerSignupForm()
+	{
+		String result = "";
+		
+		result = "/seeker/SignupForm";
+		
+		return result;
+	}
+	
+	// 구인자 회원가입 폼 요청 페이지
+	
 	// 관리자 로그인
-	@RequestMapping(value = "adminlogin.action", method = RequestMethod.POST)
-	public String adminLogin(AdminDTO admin, HttpServletRequest request)
+	@RequestMapping(value = "/adminlogin.action", method = RequestMethod.POST)
+	public String adminLogin(AdminDTO admin, HttpSession session)
 	{
 		String result = "";
 		
@@ -47,7 +61,6 @@ public class LoginController
 		{
 			// 로그인 성공
 			// 로그인 성공시 관리자임을 증명하는 값을 세션에 남김
-			HttpSession session = request.getSession();
 			session.setAttribute("admin", "");
 			
 			result = "redirect:adminmain.action";
@@ -58,6 +71,18 @@ public class LoginController
 			result = "redirect:loginform.action?memberType=admin";
 		}
 		
+		return result;
+	}
+	
+	// 로그아웃
+	@RequestMapping(value = "/logout.action")
+	public String logOut(HttpSession session)
+	{
+		String result = "";
+		
+		session.invalidate();
+		
+		result = "redirect:loginform.action";
 		
 		return result;
 	}

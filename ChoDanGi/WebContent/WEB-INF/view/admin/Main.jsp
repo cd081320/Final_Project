@@ -17,5 +17,7 @@
 </head>
 <body>
 
+<a role="btn" href="logout.action" class="btn btn-danger">로그아웃</a>
+
 </body>
 </html>

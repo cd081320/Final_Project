@@ -18,28 +18,32 @@
 </head>
 <body>
 
-<div class="container">
+<div class="container border bg-light">
 	<h2 class="text-center">구직자 로그인</h2>
+</div>
+<div class="container border top-50">
+
 	
-	<div class="btn_group">
-		<a href="loginform.action?memberType=seeker" class="btn btn-primary active">구직자</a>
-		<a href="loginform.action?memberType=poster" class="btn btn-secondary">구인자</a>
-		<a href="loginform.action?memberType=admin" class="btn btn-secondary">관리자</a>
+	<div class="btn-group text-center">
+		<a role="btn" href="loginform.action?memberType=seeker" class="btn btn-primary active">구직자</a>
+		<a role="btn" href="loginform.action?memberType=poster" class="btn btn-secondary">구인자</a>
+		<a role="btn" href="loginform.action?memberType=admin" class="btn btn-secondary">관리자</a>
 	</div>
 	
 	<form method="post" action="seekerlogin.action" id="login-form">
 		<input type="text" name="login_id" placeholder="ID"> 
 		<input type="password" name="login_pw" placeholder="Password">
+		<button type="submit" class="btn btn-success">Login</button>
 		<br /><br />
 		<label for="remember-check">
 			<input type="checkbox" id="remember-check">아이디 저장하기
 		</label>
 		<br><br>
-		<label><a href="#">구직자 회원가입</a></label>
-		<label><a href="#">아이디 찾기</a></label>
-		<label><a href="#">비밀번호 변경</a></label>
-		
-		<input type="submit" value="Login">
+		<div id="links" class="">
+			<a role="btn" href="seekersignupform.action" class="btn btn-info">구직자 회원가입</a>
+			<a role="btn" href="seekerfindid.action" class="btn btn-info">아이디 찾기</a>
+			<a role="btn" href="seekerfindpw.action" class="btn btn-info">비밀번호 변경</a>
+		</div>
 		
 	</form>
 	
