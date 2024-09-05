@@ -45,7 +45,62 @@ public class LoginController
 		return result;
 	}
 	
+	// 구직자 아이디 찾기 폼 요청 페이지
+	@RequestMapping(value = "seekerfindidform.action")
+	public String seekerFindIdForm()
+	{
+		String result = "";
+		
+		result = "/seeker/FindIdForm";
+		
+		return result;
+	}
+	
+	// 구직자 비밀번호 변경 폼 요청 페이지
+	@RequestMapping(value = "seekerchangepwform.action")
+	public String seekerChangePwForm()
+	{
+		String result = "";
+		
+		result = "/seeker/ChangePwForm";
+		
+		return result;
+	}
+	
+	
+	
 	// 구인자 회원가입 폼 요청 페이지
+	@RequestMapping(value = "postersignupform.action")
+	public String posterSignupForm()
+	{
+		String result = "";
+		
+		result = "/poster/SignupForm";
+		
+		return result;
+	}
+	
+	// 구인자 아이디 찾기 폼 요청 페이지
+	@RequestMapping(value = "posterfindidform.action")
+	public String posterFindIdForm()
+	{
+		String result = "";
+		
+		result = "/poster/FindIdForm";
+		
+		return result;
+	}
+	
+	// 구인자 비밀번호 변경 폼 요청 페이지
+	@RequestMapping(value = "posterchangepwform.action")
+	public String posterChangePwForm()
+	{
+		String result = "";
+		
+		result = "/poster/ChangePwForm";
+		
+		return result;
+	}
 	
 	// 관리자 로그인
 	@RequestMapping(value = "/adminlogin.action", method = RequestMethod.POST)

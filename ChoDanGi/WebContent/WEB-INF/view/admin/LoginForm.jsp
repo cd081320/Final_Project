@@ -18,13 +18,14 @@
 </head>
 <body>
 
-<div class="container">
+<div class="container border bg-light">
 	<h2 class="text-center">관리자 로그인</h2>
-	
-	<div class="btn_group">
-		<a href="loginform.action?memberType=seeker" class="btn btn-secondary">구직자</a>
-		<a href="loginform.action?memberType=poster" class="btn btn-secondary">구인자</a>
-		<a href="loginform.action?memberType=admin" class="btn btn-primary active">관리자</a>
+</div>
+<div class="container border">
+	<div class="btn-group">
+		<a role="btn" href="loginform.action?memberType=seeker" class="btn btn-secondary">구직자</a>
+		<a role="btn" href="loginform.action?memberType=poster" class="btn btn-secondary">구인자</a>
+		<a role="btn" href="loginform.action?memberType=admin" class="btn btn-primary active">관리자</a>
 	</div>
 	
 	<form method="post" action="adminlogin.action" id="login-form">
