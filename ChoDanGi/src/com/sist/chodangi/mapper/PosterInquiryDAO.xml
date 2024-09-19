@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.sist.chodangi.IPosterInquiryDAO">
+	<select id="list" resultType="com.sist.chodangi.PosterInquiryDTO">
+		SELECT ID, REPORT_TYPE
+		FROM POSTER_REPORT_TYPE
+	</select>
+	
+	<!-- 구인자 신고 입력 -->
+	<insert id="add">
+		INSERT INTO POSTER_REPORT(ID,S_ID,P_REPORT_TYPE_ID,P_ID,STATUS_ID,TITLE,CONTENT)
+		VALUES(SEQ_POSTER_REPORT.NEXTVAL, #{s_id}, #{p_report_type_id}, #{p_id}, #{status_id}
+		, #{title}, #{content})
+	</insert>
+	
+	<!-- 구인자 신고문의 답변 -->
+	<insert id="answer">
+		INSERT INTO POSTER_REPORT_ANSWER(ID, P_REPORT_ID, A_ID, ANSWER)
+		VALUES(SEQ_POSTER_REPORT_ANSWER.NEXTVAL, #{p_report_id}, #{a_id}, #{answer})
+	</insert>
+	
+	<!-- 구인자 신고문의 상태값 변경 -->
+	<update id="status_update">
+		UPDATE POSTER_REPORT SET STATUS_ID = 2 WHERE ID = #{p_report_id}
+	</update>
+	
+	<!-- 관리자 시점 구인자들의 신고 리스트 -->
+	<select id="list2" resultType="com.sist.chodangi.PosterInquiryDTO">
+		SELECT PR.ID AS ID, SI.LOGIN_ID AS S_LOGIN_ID, PR.TITLE AS TITLE, PRT.REPORT_TYPE AS REPORT_TYPE
+		, PI.LOGIN_ID AS P_LOGIN_ID, PR.REPORT_DATE AS REPORT_DATE, PRS.STATE AS STATE
+		FROM POSTER_REPORT PR, SEEKER S, SEEKER_INFO SI, POSTER_REPORT_TYPE PRT
+		, POSTER_INFO PI, POSTER_REPORT_STATUS PRS
+		WHERE PR.S_ID = S.ID
+		AND S.ID = SI.S_ID
+		AND PR.P_REPORT_TYPE_ID = PRT.ID
+		AND PR.P_ID = PI.P_ID
+		AND PR.STATUS_ID = PRS.ID
+		ORDER BY ID DESC
+	</select>
+	
+	<select id="p_search" resultType="com.sist.chodangi.PosterInquiryDTO">
+		SELECT SI.LOGIN_ID AS S_LOGIN_ID, PR.TITLE AS TITLE, PRT.REPORT_TYPE AS REPORT_TYPE
+		, PR.REPORT_DATE AS REPORT_DATE , PI.LOGIN_ID AS P_LOGIN_ID, PR.CONTENT AS CONTENT, PR.ID AS ID
+		FROM POSTER_REPORT PR, POSTER_INFO PI, SEEKER_INFO SI, POSTER_REPORT_TYPE PRT
+		WHERE PR.S_ID = SI.S_ID
+		AND PR.P_ID = PI.P_ID
+		AND PR.P_REPORT_TYPE_ID = PRT.ID
+		AND PR.ID = #{id}
+	</select>	
+</mapper>

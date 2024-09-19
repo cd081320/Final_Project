@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sist.chodangi.IPostDAO">
+	
+	<!-- 
+	<select id="list" resultType="com.test.mybatis.PostDTO">
+		SELECT ID
+			 , P_COMPANY_INFO_ID
+			 , LOCATION_ID
+			 , CATEGORY_ID
+             , GENDER_ID
+             , PUBLIC_STATUS_ID
+             , TITLE, HOURLY_WAGE
+             , CLOSING_TIME
+             , WORK_START_TIME
+             , WORK_END_TIME
+             , POSTING_DATE
+             , WORK_CONTENT
+             , VIEW_COUNT
+             , HEADCOUNT
+		FROM POSTING
+		ORDER BY ID
+	</select>
+	-->
+	
+	<select id="list" resultType="com.sist.chodangi.PostDTO">
+		SELECT P.TITLE AS title
+           , P.CLOSING_TIME AS closingTime
+           , P.WORK_START_TIME AS workStartTime
+           , P.WORK_END_TIME AS workEndTime
+           , L.NAME AS locationName
+           , AV.COUNT AS count
+           , P.HEADCOUNT AS headcount
+           , OS.STATE AS openStatus
+           , P.HOURLY_WAGE AS hourlyWage
+           , PO.COMPANY AS companyName
+           , P.WORK_CONTENT AS workContent
+           , C.NAME AS categoryName
+           , P.ID AS postingId
+      FROM POSTING P, POSTER_VIEW PO, APPLICATE_VIEW AV, LOCATION L, OPEN_STATUS OS, CATEGORY C
+      WHERE P.ID = PO.POSTING_ID
+      AND P.ID = AV.POSTING_ID
+      AND P.LOCATION_ID = L.ID
+      AND P.PUBLIC_STATUS_ID = OS.ID
+      AND P.CATEGORY_ID = C.ID
+	
+	</select>
+</mapper>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sist.chodangi.ISeekerEvalDAO">
+ 	<!-- 구인자 → 구직자 평가 요소 -->
+	<select id="list" resultType="com.sist.chodangi.SeekerEvalDTO">
+		SELECT ID, NAME
+		FROM SEEKER_EVALUATION_LIST
+	</select>
+	<insert id="add">
+		INSERT INTO SEEKER_EVALUATION(ID, POSTING_ID, P_ID, S_ID, ITEM_ID, SCORE)
+		VALUES (SEQ_SEEKER_EVALUATION.NEXTVAL, #{posting_id}, #{p_id}, #{s_id}, #{item_id}, #{score})
+	</insert>
+</mapper>

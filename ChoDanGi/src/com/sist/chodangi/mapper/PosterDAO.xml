@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sist.chodangi.IPosterDAO">
+
+	<select id="search" resultType="Integer">
+		SELECT COUNT(*) AS COUNT
+		FROM POSTER_INFO
+		WHERE LOGIN_ID = #{login_id}
+	</select>
+	
+	<select id="login" resultType="int">
+		SELECT NVL(MAX(P_ID), 0) AS P_ID
+		FROM POSTER P JOIN POSTER_INFO PI
+		ON P.ID = PI.P_ID
+		WHERE PI.LOGIN_ID = #{login_id}
+		  AND #{login_pw} = CRYPTPACK.DECRYPT(PI.LOGIN_PW, #{login_pw})
+	</select>
+	
+	<insert id="addPoster">
+		INSERT INTO POSTER(ID)
+		VALUES (SEQ_POSTER.NEXTVAL)
+		<selectKey order="AFTER" resultType="int" keyProperty="p_id">
+			SELECT SEQ_POSTER.CURRVAL FROM DUAL
+		</selectKey>
+	</insert>
+	
+	<insert id="addPosterInfo">
+		INSERT INTO POSTER_INFO(ID, P_ID, GENDER_ID, LOGIN_ID, LOGIN_PW, NAME, TEL, EMAIL, SSN_FRONT)
+		VALUES(SEQ_POSTER_INFO.NEXTVAL, #{p_id}, #{gender_id}, #{login_id},
+				CRYPTPACK.ENCRYPT(#{login_pw}, #{login_pw}), #{name}, #{tel}, #{email}, #{ssn_front})
+	</insert>
+	
+	<select id="posterMypage" resultType="com.sist.chodangi.PosterDTO">
+		SELECT ID AS pi_id
+			 , P_ID AS p_id
+		     , LOGIN_ID AS login_id
+		     , LOGIN_PW AS login_pw
+		     , NAME AS name
+		     , TEL AS tel
+		     , EMAIL AS email
+		     , SSN_FRONT AS ssn_front
+		FROM POSTER_INFO
+		WHERE P_ID = #{p_id}
+	</select>
+	
+	<select id="pwdCheckAjax" resultType="Integer">
+		SELECT COUNT(*) AS COUNT
+		FROM POSTER_INFO
+		WHERE CRYPTPACK.DECRYPT(LOGIN_PW, #{login_pw}) = #{login_pw}
+  		AND P_ID = #{p_id}
+	</select>
+	
+	<select id="appList" resultType="com.sist.chodangi.PosterStatusDTO">
+		SELECT PAR.ID AS PAR_ID
+		     , P.TITLE AS TITLE 
+		     , TO_CHAR(P.CLOSING_TIME, 'YYYY-MM-DD HH24:MI') AS CLOSING_TIME 
+		     , TO_CHAR(P.WORK_START_TIME, 'YYYY-MM-DD HH24:MI') AS WORK_START_TIME 
+		     , TO_CHAR(P.WORK_END_TIME, 'YYYY-MM-DD HH24:MI') AS WORK_END_TIME 
+		     , L.NAME AS LOCATION_NAME 
+		     , PAS.STATE AS STATE 
+		     , C.NAME AS COMPANY_NAME 
+		     , C.ID AS C_ID 
+		     , P.ID AS P_ID 
+		     , P.HEADCOUNT AS HEADCOUNT 
+		     , P.HOURLY_WAGE AS HOURLY_WAGE 
+		FROM POSTING_APP_RESPONSE PAR, POSTING_APP_STATUS PAS , POSTING_APPLICATION PA, POSTING P, LOCATION L
+		, POSTER_COMPANY_INFO PCI, COMPANY C, POSTER_INFO PI
+		WHERE PAR.STATUS_ID = PAS.ID 
+		AND PAR.P_APPLICATION_ID = PA.ID 
+		AND PA.POSTING_ID = P.ID 
+		AND P.LOCATION_ID = L.ID 
+		AND P.P_COMPANY_INFO_ID = PCI.ID 
+		AND PCI.C_ID = C.ID
+		AND PI.ID = PCI.P_INFO_ID
+		AND PI.P_ID = #{p_id}
+	</select>
+	
+	<select id="offList" resultType="com.sist.chodangi.PosterStatusDTO">
+		SELECT POR.ID AS POR_ID
+		     , P.TITLE AS TITLE 
+		     , TO_CHAR(P.CLOSING_TIME, 'YYYY-MM-DD HH24:MI') AS CLOSING_TIME 
+		     , TO_CHAR(P.WORK_START_TIME, 'YYYY-MM-DD HH24:MI') AS WORK_START_TIME 
+		     , TO_CHAR(P.WORK_END_TIME, 'YYYY-MM-DD HH24:MI') AS WORK_END_TIME 
+		     , L.NAME AS LOCATION_NAME 
+		     , POS.STATE AS STATE 
+		     , C.NAME AS COMPANY_NAME 
+		     , C.ID AS C_ID 
+		     , P.HEADCOUNT AS HEADCOUNT 
+		     , P.HOURLY_WAGE AS HOURLY_WAGE 
+		FROM POSTING_OFF_RESPONSE POR, POSTING_OFFER PO, POSTING_OFF_STATUS POS , POSTING P, LOCATION L, POSTER_COMPANY_INFO PCI, COMPANY C, POSTER_INFO PI 
+		WHERE POR.OFFER_ID = PO.ID
+		AND POR.STATUS_ID = POS.ID 
+		AND PO.POSTING_ID = P.ID 
+		AND P.LOCATION_ID = L.ID 
+		AND P.P_COMPANY_INFO_ID = PCI.ID 
+		AND PCI.C_ID = C.ID
+		AND PI.ID = PCI.P_INFO_ID
+		AND PI.P_ID = #{p_id}
+	</select>
+	
+	
+	
+	<select id="endPostingList" resultType="com.sist.chodangi.JobPostingStatusDTO">
+		SELECT DISTINCT SI.NICKNAME AS nickName
+             , P.ID AS pId
+             , P.TITLE AS title
+             , CP.NAME AS companyName
+             , L.NAME AS locationName
+             , C.NAME AS categoryName
+             , P.HOURLY_WAGE AS hourlyWage
+             , P.WORK_START_TIME AS workStartTime
+             , P.WORK_END_TIME AS workEndTime
+		FROM POSTING P, POSTING_APPLICATION PA, POSTING_APP_RESPONSE PAR, POSTING_APP_STATUS PAS , SEEKER S, SEEKER_INFO SI
+       	   , POSTER_COMPANY_INFO PCI, POSTER_INFO PI , LOCATION L, CATEGORY C, COMPANY CP
+		WHERE P.ID = PA.POSTING_ID
+	      AND PA.ID = PAR.P_APPLICATION_ID
+	      AND PAS.ID = PAR.STATUS_ID
+	      AND PA.S_ID = S.ID
+	      AND S.ID = SI.S_ID
+	      AND PAS.STATE = '구인자 수락'
+	      AND PCI.ID = P.P_COMPANY_INFO_ID
+	      AND PCI.P_INFO_ID = PI.ID
+	      AND P.LOCATION_ID = L.ID
+	      AND C.ID = P.CATEGORY_ID
+	      AND CP.ID = PCI.C_ID
+	      AND P.WORK_END_TIME BETWEEN (SYSDATE - INTERVAL '3' YEAR) AND SYSDATE
+	      AND PI.P_ID = #{p_id}
+	</select>
+	
+	<!-- NULL 처리 필요, 조회없음 처리 -->
+	<select id="SeekerInfo" resultType="com.sist.chodangi.SeekerDTO">
+		SELECT NICKNAME AS nickname
+	         , TEL AS tel
+	         , EMAIL AS email
+	         , SSN_FRONT AS ssn_front
+	         , ADDR_DETAIL AS addr_detail
+		FROM SEEKER_INFO
+		WHERE NICKNAME = #{nickname}
+	</select>
+		
+	<update id="posterMyPageUpdate">
+		UPDATE POSTER_INFO
+		SET LOGIN_ID = #{login_id}
+      	  , NAME = #{name}
+       	  , TEL = #{tel}
+      	  , EMAIL = #{email}
+      	  , SSN_FRONT = #{ssn_front}
+		WHERE P_ID = #{p_id}
+	</update>
+	
+	
+	<update id="changePwdAjax">
+		UPDATE POSTER_INFO
+		SET LOGIN_PW = CRYPTPACK.ENCRYPT(#{login_pw}, #{login_pw})
+		WHERE P_ID = #{p_id}
+	</update>
+	
+	
+	<select id="companyList" resultType="com.sist.chodangi.PosterCompanyDTO">
+		SELECT PCI.ID AS pci_id
+			 , C.ID AS c_id
+			 , PI.ID AS pi_id
+			 , C.NAME AS name
+		     , C.LOCATION AS location
+		     , C.DETAILS AS details
+		     , PCI.BUSINESS_ID AS business_id
+		     , PCI.COMPANY_DATE AS company_date
+		FROM COMPANY C, POSTER_COMPANY_INFO PCI, POSTER_INFO PI
+		WHERE C.ID = PCI.C_ID
+		  AND PI.ID = PCI.P_INFO_ID
+		  AND PI.P_ID = #{p_id}
+	</select>
+	
+	<select id="searchLocation" resultType="String">
+		SELECT ID
+		FROM LOCATION
+		WHERE NAME = #{extraAddr}
+	</select>
+	
+	<insert id="CompanyInsert">
+		INSERT INTO COMPANY(ID, LOCATION_ID, NAME, LOCATION, DETAILS, POSTADDR)
+		VALUES(SEQ_COMPANY.NEXTVAL, #{location_id}, #{name}, #{location}, #{details}, #{postaddr})
+	</insert>
+	
+	<select id="searchCompanyId" resultType="Integer">
+		SELECT ID AS c_id
+		FROM COMPANY
+		WHERE POSTADDR = #{postaddr}
+	</select>
+	
+	<insert id="CompanyInfoInsert">
+		INSERT INTO POSTER_COMPANY_INFO
+		VALUES(SEQ_POSTER_COMPANY_INFO.NEXTVAL, #{c_id}, #{pi_id}, SYSDATE, #{business_id})
+	</insert>
+	
+	
+	<select id="searchCompanyList" resultType="com.sist.chodangi.PosterCompanyDTO">
+		SELECT C.ID AS c_id
+			 , PCI.ID AS pci_id
+             , PI.ID AS pi_id
+		     , C.NAME AS name
+		     , C.LOCATION AS location
+		     , C.DETAILS AS details
+		     , PCI.BUSINESS_ID AS business_id
+		     , PCI.COMPANY_DATE AS company_date
+		     , C.POSTADDR AS postaddr
+		FROM COMPANY C, POSTER_COMPANY_INFO PCI, POSTER_INFO PI
+		WHERE C.ID = PCI.C_ID
+		AND PI.ID = PCI.P_INFO_ID
+		AND C.ID = #{c_id}
+	</select>
+	
+	<update id="CompanyUpdate">
+		UPDATE COMPANY
+		SET LOCATION_ID = #{location_id}, NAME = #{name}, LOCATION = #{location}, DETAILS = #{details}, POSTADDR = #{postaddr}
+		WHERE ID = #{c_id}
+	</update>	
+	
+	<update id="CompanyInfoUpdate">
+		UPDATE POSTER_COMPANY_INFO
+		SET C_ID = #{c_id}, P_INFO_ID = #{pi_id}, BUSINESS_ID = #{business_id}
+		WHERE ID = #{pci_id}
+	</update>
+	
+	<delete id="CompanyDelete">
+		DELETE
+		FROM COMPANY
+		WHERE ID = #{c_id}
+	</delete>
+	
+	<insert id="PosterLogInsert">
+		INSERT INTO POSTER_LOG
+		VALUES(SEQ_POSTER_LOG.NEXTVAL, #{p_id}, SYSDATE)
+	</insert>
+	
+	<select id="OfferEndList" resultType="com.sist.chodangi.OfferEndListDTO">
+		SELECT P.TITLE AS title
+		     , C.NAME AS company_name
+		     , L.NAME AS location_name 
+		     , CG.NAME AS category_name
+		     , P.HOURLY_WAGE AS hourly_wage
+		     , P.WORK_START_TIME AS work_start_time
+		     , P.WORK_END_TIME AS wokr_end_time
+		     , SI.NICKNAME AS seeker_nickname
+		FROM POSTING P, POSTER_COMPANY_INFO PCI, COMPANY C, POSTER_INFO PI, LOCATION L, CATEGORY CG
+		   , POSTING_OFFER PO, POSTING_OFF_RESPONSE POR, POSTING_OFF_STATUS POS, OPEN_APPLICATION OA, SEEKER S, SEEKER_INFO SI
+		WHERE P.P_COMPANY_INFO_ID = PCI.ID
+		  AND C.ID = PCI.C_ID
+		  AND PI.ID = PCI.P_INFO_ID
+		  AND L.ID = P.LOCATION_ID
+		  AND CG.ID = P.CATEGORY_ID
+		  AND PO.POSTING_ID = P.ID
+		  AND POR.OFFER_ID = PO.ID
+		  AND POS.ID = POR.STATUS_ID
+		  AND OA.ID = PO.OPEN_APPLICATION_ID
+		  AND S.ID = OA.S_ID
+		  AND SI.S_ID = S.ID
+		  AND P.WORK_END_TIME BETWEEN (SYSDATE - INTERVAL '3' YEAR) AND SYSDATE
+		  AND POS.STATE = '구직자 수락'
+		  AND PI.P_ID = #{p_id}
+	</select>
+	
+	<select id="categoryList" resultType="com.sist.chodangi.CategoryDTO">
+		SELECT ID, NAME
+		FROM CATEGORY
+	</select>
+	
+	<select id="genderList" resultType="com.sist.chodangi.GenderDTO">
+		SELECT ID, GENDER
+		FROM GENDER
+	</select>
+	
+	<select id="openStatusList" resultType="com.sist.chodangi.OpenStatusDTO">
+		SELECT ID, STATE
+		FROM OPEN_STATUS
+	</select>
+	
+	<select id="posterCompanyList" resultType="com.sist.chodangi.PosterCompanyDTO">
+		SELECT PCI.ID AS pci_id
+		     , C.NAME AS name
+		     , C.LOCATION_ID AS location_id
+		FROM POSTER_INFO PI, POSTER_COMPANY_INFO PCI, COMPANY C
+		WHERE PI.ID = PCI.P_INFO_ID
+  		AND C.ID = PCI.C_ID
+  		AND PI.P_ID = #{p_id}
+	</select>
+	
+	<!-- 구인자 정보 번호 얻기 -->
+	<select id="searchPIID" resultType="Integer">
+		SELECT ID 
+		FROM POSTER_INFO
+		WHERE P_ID = #{p_id}
+	</select>
+	
+	<!-- 구인자 회사 번호 얻기 -->
+	<select id="searchCId" resultType="Integer">
+		SELECT C.ID
+		FROM POSTER_INFO PI, POSTER_COMPANY_INFO PCI, COMPANY C
+		WHERE PI.ID = PCI.P_INFO_ID
+		  AND PCI.C_ID = C.ID
+		  AND PI.P_ID = #{p_id}
+		  AND PCI.ID = #{pci_id}
+	</select>
+	
+	
+	<select id="searchLocationId" resultType="Integer">
+		SELECT C.LOCATION_ID
+		FROM COMPANY C, POSTER_COMPANY_INFO PCI
+		WHERE C.ID = PCI.C_ID
+		  AND PCI.P_INFO_ID = #{pi_id}
+		  AND C.ID = #{c_id}
+	</select>
+	
+	<insert id="PostingInsert">
+		INSERT INTO POSTING
+		( ID, P_COMPANY_INFO_ID, LOCATION_ID, CATEGORY_ID, GENDER_ID
+		, PUBLIC_STATUS_ID, TITLE, HOURLY_WAGE, CLOSING_TIME
+		, WORK_START_TIME, WORK_END_TIME, POSTING_DATE, WORK_CONTENT, VIEW_COUNT, HEADCOUNT)
+		VALUES
+		( SEQ_POSTING.NEXTVAL
+		, #{pci_id}
+		, #{location_id}
+		, #{category_id}
+		, #{gender_id}
+		, #{public_status_id}
+		, #{title}
+		, #{hourly_wage}
+		, TO_DATE(#{closing_time}, 'YYYY-MM-DD HH24:MI')
+		, TO_DATE(#{work_start_time}, 'YYYY-MM-DD HH24:MI')
+		, TO_DATE(#{work_end_time}, 'YYYY-MM-DD HH24:MI')
+		, SYSDATE
+		, #{work_content}
+		, 0
+		, #{headcount})
+	</insert>
+	
+	
+	
+</mapper>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sist.chodangi.IAdminDAO">
+	<!-- login -->
+	<!-- 성공시 count 1 반환 실패시 0 -->
+	<select id="login" resultType="java.lang.Integer">
+		SELECT COUNT(*) AS COUNT
+		FROM ADMIN
+		WHERE LOGIN_ID = #{login_id}
+		  AND LOGIN_PW = #{login_pw}
+	</select>
+
+	<select id="headcount" resultType="java.lang.Integer">
+		SELECT HEADCOUNT
+		FROM MEMBER_CHANGE
+		WHERE ID = (SELECT MAX(ID) AS ID
+            		FROM MEMBER_CHANGE)
+	</select>
+	
+	<insert id="change_headcount">
+		INSERT INTO MEMBER_CHANGE(ID, A_ID, HEADCOUNT)
+		VALUES(SEQ_MEMBER_CHANGE.NEXTVAL, #{a_id}, #{headcount})
+	</insert>
+</mapper>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sist.chodangi.IOpenApplicationDAO">
+	<!-- list -->
+	<!-- 전체 리스트 -->
+<!-- 	<select id="list" resultType="com.sist.chodangi.OpenApplicationDTO"> -->
+<!-- 		SELECT ID, S_ID, LOCATION_ID -->
+<!-- 		     , TO_CHAR(CLOSING_DATE, 'YYYY-MM-DD HH24:MI') AS CLOSING_DATE -->
+<!-- 		     , TO_CHAR(START_DATE, 'YYYY-MM-DD HH24:MI') AS START_DATE -->
+<!-- 		     , TO_CHAR(END_DATE, 'YYYY-MM-DD HH24:MI') AS END_DATE -->
+<!-- 		     , TO_CHAR(CREATE_DATE, 'YYYY-MM-DD HH24:MI') AS CREATE_DATE -->
+<!-- 		     , VIEW_COUNT -->
+<!-- 		FROM OPEN_APPLICATION -->
+<!-- 	</select> -->
+	
+	<!-- list -->
+	<!-- 특정 구직자의 리스트 -->
+	<select id="list" parameterType="int" resultType="com.sist.chodangi.OpenApplicationDTO">
+		SELECT ID, S_ID, LOCATION_ID
+		     , TO_CHAR(CLOSING_DATE, 'YYYY-MM-DD HH24:MI') AS CLOSING_DATE
+		     , TO_CHAR(START_DATE, 'YYYY-MM-DD HH24:MI') AS START_DATE
+		     , TO_CHAR(END_DATE, 'YYYY-MM-DD HH24:MI') AS END_DATE
+		     , TO_CHAR(CREATE_DATE, 'YYYY-MM-DD HH24:MI') AS CREATE_DATE
+		     , VIEW_COUNT
+		FROM OPEN_APPLICATION
+		WHERE S_ID = #{s_id}
+	</select>
+	
+	<!-- add -->
+	<insert id="add">
+		INSERT INTO OPEN_APPLICATION(ID, S_ID, LOCATION_ID, CLOSING_DATE, START_DATE, END_DATE)
+		VALUES (SEQ_OPEN_APPLICATION.NEXTVAL, #{s_id}, #{location_id}, TO_DATE(#{closing_date}, 'YYYY-MM-DD HH24:MI')
+    		 , TO_DATE(#{start_date}, 'YYYY-MM-DD HH24:MI'), TO_DATE(#{end_date}, 'YYYY-MM-DD HH24:MI'))
+	</insert>
+	
+	<!-- remove -->
+	<delete id="remove">
+		DELETE FROM OPEN_APPLICATION WHERE ID = #{id}
+	</delete>
+</mapper>

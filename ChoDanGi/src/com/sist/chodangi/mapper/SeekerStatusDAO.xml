@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sist.chodangi.ISeekerStatusDAO">
+	
+	<!-- appList -->
+	<select id="appList" resultType="com.sist.chodangi.SeekerStatusDTO">
+		SELECT PAR.ID AS PAR_ID, P.TITLE AS TITLE
+		     , TO_CHAR(P.CLOSING_TIME, 'YYYY-MM-DD HH24:MI') AS CLOSING_TIME
+		     , TO_CHAR(P.WORK_START_TIME, 'YYYY-MM-DD HH24:MI') AS WORK_START_TIME
+		     , TO_CHAR(P.WORK_END_TIME, 'YYYY-MM-DD HH24:MI') AS WORK_END_TIME
+		     , L.NAME AS LOCATION_NAME
+		     , PAS.STATE AS STATE
+		     , PAR.STATUS_ID AS STATUS_ID
+		     , C.NAME AS COMPANY_NAME
+		     , C.ID AS C_ID
+		     , P.ID AS P_ID
+		     , P.HEADCOUNT AS HEADCOUNT
+    		 , P.HOURLY_WAGE AS HOURLY_WAGE
+		FROM POSTING_APP_RESPONSE PAR, POSTING_APP_STATUS PAS
+		   , POSTING_APPLICATION PA, POSTING P, LOCATION L, POSTER_COMPANY_INFO PCI, COMPANY C
+		WHERE PAR.STATUS_ID = PAS.ID
+		  AND PAR.P_APPLICATION_ID = PA.ID
+		  AND PA.POSTING_ID = P.ID
+		  AND C.LOCATION_ID = L.ID
+		  AND P.P_COMPANY_INFO_ID = PCI.ID
+		  AND PCI.C_ID = C.ID
+		  AND PA.S_ID = #{s_id}
+	</select>
+	
+	<!-- offList -->
+	<select id="offList" resultType="com.sist.chodangi.SeekerStatusDTO">
+		SELECT POR.ID AS POR_ID, P.TITLE AS TITLE
+		     , TO_CHAR(P.CLOSING_TIME, 'YYYY-MM-DD HH24:MI') AS CLOSING_TIME
+		     , TO_CHAR(P.WORK_START_TIME, 'YYYY-MM-DD HH24:MI') AS WORK_START_TIME
+		     , TO_CHAR(P.WORK_END_TIME, 'YYYY-MM-DD HH24:MI') AS WORK_END_TIME
+		     , L.NAME AS LOCATION_NAME
+		     , POS.STATE AS STATE
+		     , POR.STATUS_ID AS STATUS_ID
+		     , C.NAME AS COMPANY_NAME
+		     , C.ID AS C_ID
+		     , P.HEADCOUNT AS HEADCOUNT
+		     , P.HOURLY_WAGE AS HOURLY_WAGE
+		FROM POSTING_OFF_RESPONSE POR, POSTING_OFFER PO, POSTING_OFF_STATUS POS
+		   , POSTING P, LOCATION L, POSTER_COMPANY_INFO PCI, COMPANY C
+		WHERE POR.OFFER_ID = PO.ID
+		  AND POR.STATUS_ID = POS.ID
+		  AND PO.POSTING_ID = P.ID
+		  AND C.LOCATION_ID = L.ID
+		  AND P.P_COMPANY_INFO_ID = PCI.ID
+		  AND PCI.C_ID = C.ID
+		  AND POR.S_ID = #{s_id}
+	</select>
+	
+	
+	<!-- modifyOffState -->
+	<update id="modifyOffState">
+		UPDATE POSTING_OFF_RESPONSE
+		SET STATUS_ID = #{status_id}
+		WHERE ID = #{id}
+	</update>
+	
+	<!-- modifyAppState -->
+	<update id="modifyAppState">
+		UPDATE POSTING_APP_RESPONSE
+		SET STATUS_ID = #{status_id}
+		WHERE ID = #{id}
+	</update>
+	
+	<!-- getP_application_id -->
+	<select id="getP_application_id" resultType="int">
+		SELECT P_APPLICATION_ID
+		FROM POSTING_APP_RESPONSE
+		WHERE ID = #{id}
+	</select>
+	
+	<!-- removePAR -->
+	<delete id="removePAR">
+		DELETE
+		FROM POSTING_APP_RESPONSE
+		WHERE ID = #{id}
+	</delete>
+	<!-- removePA -->
+	<delete id="removePA">
+		DELETE
+		FROM POSTING_APPLICATION
+		WHERE ID = #{p_application_id}
+	</delete>
+</mapper>

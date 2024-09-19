@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sist.chodangi.ISeekerDAO">
+	<!-- login -->
+	<!-- 성공시 s_id 반환 실패시 0 -->
+	<select id="login" resultType="int">
+		SELECT NVL(MAX(S_ID), 0) AS S_ID
+		FROM SEEKER S JOIN SEEKER_INFO SI
+		ON S.ID = SI.S_ID
+		WHERE SI.LOGIN_ID = #{login_id}
+		  AND #{login_pw} = CRYPTPACK.DECRYPT(SI.LOGIN_PW, #{login_pw})
+	</select>
+	
+	<!-- searchById -->
+	<select id="searchById" resultType="com.sist.chodangi.SeekerDTO">
+		SELECT S.ID AS ID
+			 , SI.LOGIN_ID AS LOGIN_ID
+			 , SI.LOGIN_PW AS LOGIN_PW
+			 , SI.NAME AS NAME
+			 , SI.TEL AS TEL
+			 , SI.SSN_FRONT AS SSN_FRONT
+			 , SI.NICKNAME AS NICKNAME
+			 , SI.EMAIL AS EMAIL
+			 , SI.ADDR_DETAIL AS ADDR_DETAIL
+			 , SI.GENDER_ID AS GENDER_ID
+			 , SI.LOCATION_ID AS LOCATION_ID
+		FROM SEEKER S JOIN SEEKER_INFO SI
+		ON S.ID = SI.S_ID
+		WHERE S.ID = #{s_id}
+	</select>
+	
+	<!-- searchLoginId -->
+	<!-- 성공시 count 1 반환 실패시 0 -->
+	<select id="searchLoginId" resultType="java.lang.Integer">
+		SELECT COUNT(*) AS COUNT
+		FROM SEEKER S, SEEKER_INFO SI, SEEKER_CANCEL SC
+		WHERE S.ID = SI.S_ID(+)
+		  AND S.ID = SC.S_ID(+)
+		  AND (SI.LOGIN_ID = #{login_id} OR SC.LOGIN_ID = #{login_id})
+	</select>
+	
+	<!-- searchNickname -->
+	<select id="searchNickname" resultType="java.lang.Integer">
+		SELECT (SELECT COUNT(*) AS COUNT
+				FROM NICKNAME_UPDATE
+				WHERE OLD_NICKNAME = #{nickname})
+			 + (SELECT COUNT(*) AS COUNT
+				FROM SEEKER_CANCEL
+				WHERE NICKNAME = #{nickname})
+			 + (SELECT COUNT(*) AS COUNT
+				FROM SEEKER_INFO
+				WHERE NICKNAME = #{nickname})  AS COUNT
+		FROM DUAL
+	</select>
+	
+	<!-- addSeeker -->
+	<insert id="addSeeker">
+		INSERT INTO SEEKER(ID)
+		VALUES (SEQ_SEEKER.NEXTVAL)
+		<selectKey order="AFTER" resultType="int" keyProperty="id">
+			SELECT SEQ_SEEKER.CURRVAL FROM DUAL
+		</selectKey>
+	</insert>
+	<!-- addSeekerInfo -->
+	<!-- 
+	// 식별 아이디, 성별코드, 지역코드
+	private int id, gender_id, location_id;
+	// 로그인 아이디, 로그인 비밀번호, 닉네임, 이름, 전화번호, 이메일, 주민번호 앞자리, 상세 주소
+	private String login_id, login_pw, nickname, name, tel, email, ssn_front, addr_detail;
+	 -->
+	<insert id="addSeekerInfo">
+		INSERT INTO SEEKER_INFO(ID, S_ID, LOCATION_ID, GENDER_ID, LOGIN_ID, LOGIN_PW,
+	    	NICKNAME, NAME, TEL, EMAIL, ADDR_DETAIL, SSN_FRONT)
+		VALUES (SEQ_SEEKER_INFO.NEXTVAL, #{id}, #{location_id}, #{gender_id}, #{login_id}, CRYPTPACK.ENCRYPT(#{login_pw}, #{login_pw}),
+	    	#{nickname}, #{name}, #{tel}, #{email}, #{addr_detail}, #{ssn_front})
+	</insert>
+	<!-- addSeekerCategory -->
+	<insert id="addSeekerCategory">
+		INSERT INTO SEEKER_CATEGORY(ID, S_ID, CATEGORY_ID)
+		VALUES (SEQ_SEEKER_CATEGORY.NEXTVAL, #{s_id}, #{category_id})
+	</insert>
+	
+	<!-- updatePw -->
+	<!-- 구직자 아이디와 현재 비밀번호가 일치하면 입력한 비밀번호로 변경 -->
+	<update id="updatePw">
+		UPDATE SEEKER_INFO
+		SET LOGIN_PW = CRYPTPACK.ENCRYPT(#{login_pw}, #{login_pw})
+		WHERE S_ID = #{s_id}
+		  AND CRYPTPACK.DECRYPT(LOGIN_PW, #{cur_pw}) = #{cur_pw}
+	</update>
+	
+	<!-- nickname -->
+	<!-- 구직자 닉네임 가져오기 -->
+	<select id="nickname" resultType="java.lang.String">
+		SELECT NICKNAME
+		FROM SEEKER_INFO
+		WHERE S_ID = #{s_id}
+	</select>
+</mapper>

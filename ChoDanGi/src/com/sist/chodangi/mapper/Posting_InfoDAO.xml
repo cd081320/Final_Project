@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sist.chodangi.IPostingInfoDAO">
+	<select id="info" resultType="com.sist.chodangi.PostingInfoDTO">
+		SELECT P.TITLE AS TITLE
+		, C.NAME AS C_NAME
+		, P.WORK_CONTENT AS WORK_CONTENT
+		, L.NAME AS L_NAME
+		, P.HOURLY_WAGE AS HOURLY_WAGE
+		, P.HEADCOUNT AS HEADCOUNT
+		, G.GENDER AS GENDER
+		, P.POSTING_DATE AS POSTING_DATE
+		, P.WORK_START_TIME AS WORK_START_TIME
+		, P.WORK_END_TIME AS WORK_END_TIME
+		, P.CLOSING_TIME AS CLOSING_TIME
+		, CO.POSTADDR AS POSTADDR
+		FROM POSTING P, LOCATION_VIEW L, CATEGORY C, POSTER_COMPANY_INFO PCI, COMPANY CO, GENDER G
+		WHERE P.LOCATION_ID = L.ID
+		AND P.CATEGORY_ID = C.ID
+		AND P.P_COMPANY_INFO_ID = PCI.ID
+		AND PCI.C_ID = CO.ID
+		AND CO.LOCATION_ID = L.ID
+		AND P.GENDER_ID = G.ID
+		AND P.ID = 1
+		<!-- ↑ 테스트용 고정데이터 → 나중에 넘겨받기 --> 
+	</select>
+</mapper>

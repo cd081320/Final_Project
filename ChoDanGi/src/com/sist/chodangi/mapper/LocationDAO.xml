@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sist.chodangi.ILocationDAO">
+	
+	<!-- subList -->
+	<select id="subList" parameterType="int" resultType="com.sist.chodangi.LocationDTO">
+		SELECT ID, NAME
+		FROM 
+		(
+				SELECT ID, NAME, LEVEL AS LVL
+				FROM LOCATION
+				START WITH ID = #{id}
+				CONNECT BY PRIOR ID = PARENT_ID
+				ORDER BY ID
+		)
+		WHERE LVL = 2
+	</select>
+	
+	<!-- topList -->
+	<select id="topList" resultType="com.sist.chodangi.LocationDTO">
+		SELECT ID, NAME
+		FROM LOCATION
+		WHERE PARENT_ID IS NULL
+		ORDER BY ID
+	</select>
+	
+</mapper>
