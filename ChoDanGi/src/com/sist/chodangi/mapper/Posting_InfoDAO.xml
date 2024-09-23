@@ -2,8 +2,8 @@
 <!DOCTYPE mapper
  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.sist.chodangi.IPostingInfoDAO">
-	<select id="info" resultType="com.sist.chodangi.PostingInfoDTO">
+<mapper namespace="com.sist.chodangi.common.IPostingInfoDAO">
+	<select id="info" resultType="com.sist.chodangi.common.PostingInfoDTO">
 		SELECT P.TITLE AS TITLE
 		, C.NAME AS C_NAME
 		, P.WORK_CONTENT AS WORK_CONTENT
@@ -18,6 +18,7 @@
 		, CO.POSTADDR AS POSTADDR
 		, CO.ROADADDR AS ROADADDR
 		, CO.LOCATION AS COMPANY_LOCATION
+		, P.ID AS ID
 		FROM POSTING P, LOCATION_VIEW L, CATEGORY C, POSTER_COMPANY_INFO PCI, COMPANY CO, GENDER G
 		WHERE P.LOCATION_ID = L.ID
 		AND P.CATEGORY_ID = C.ID
@@ -29,7 +30,7 @@
 	</select>
 	
 	<!-- list : 구직자에게 보여줄 공고 리스트 -->
-	<select id="list" resultType="com.sist.chodangi.PostingInfoDTO">
+	<select id="list" resultType="com.sist.chodangi.common.PostingInfoDTO">
 		SELECT P.TITLE AS TITLE
 		, C.NAME AS C_NAME
 		, P.WORK_CONTENT AS WORK_CONTENT

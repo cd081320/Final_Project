@@ -2,10 +2,10 @@
 <!DOCTYPE mapper
  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.sist.chodangi.ILocationDAO">
+<mapper namespace="com.sist.chodangi.common.ILocationDAO">
 	
 	<!-- subList -->
-	<select id="subList" parameterType="int" resultType="com.sist.chodangi.LocationDTO">
+	<select id="subList" parameterType="int" resultType="com.sist.chodangi.common.LocationDTO">
 		SELECT ID, NAME
 		FROM 
 		(
@@ -19,7 +19,7 @@
 	</select>
 	
 	<!-- topList -->
-	<select id="topList" resultType="com.sist.chodangi.LocationDTO">
+	<select id="topList" resultType="com.sist.chodangi.common.LocationDTO">
 		SELECT ID, NAME
 		FROM LOCATION
 		WHERE PARENT_ID IS NULL

@@ -1,4 +1,4 @@
-<%@page import="com.sist.chodangi.PostingInfoDTO"%>
+<%@page import="com.sist.chodangi.common.PostingInfoDTO"%>
 <%@page import="java.util.ArrayList"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
@@ -242,8 +242,8 @@
 							</tr>
 							<tr class="text-center">
 								<td colspan="2">
-									<a href="#" role="button" class="btn btn-primary" id="btnAdd">지원하기</a>
-									<a href="postinglist.action" role="button" class="btn btn-secondary" id="btnAdd">닫기</a>
+									<a href="seekerapplication.action?id=${info.id }" role="button" class="btn btn-primary" id="appBtn">지원하기</a>
+									<a href="postinglist.action" role="button" class="btn btn-secondary" id="closeBtn">닫기</a>
 								</td>
 							</tr>
 

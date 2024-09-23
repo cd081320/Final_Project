@@ -1,4 +1,4 @@
-<%@page import="com.sist.chodangi.LocationDTO"%>
+<%@page import="com.sist.chodangi.common.LocationDTO"%>
 <%@page import="java.util.ArrayList"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>

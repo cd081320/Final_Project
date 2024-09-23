@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.sist.chodangi.ISeekerDAO">
+<mapper namespace="com.sist.chodangi.seeker.ISeekerDAO">
 	<!-- login -->
 	<!-- 성공시 s_id 반환 실패시 0 -->
 	<select id="login" resultType="int">
@@ -14,7 +14,7 @@
 	</select>
 	
 	<!-- searchById -->
-	<select id="searchById" resultType="com.sist.chodangi.SeekerDTO">
+	<select id="searchById" resultType="com.sist.chodangi.seeker.SeekerDTO">
 		SELECT S.ID AS ID
 			 , SI.LOGIN_ID AS LOGIN_ID
 			 , SI.LOGIN_PW AS LOGIN_PW

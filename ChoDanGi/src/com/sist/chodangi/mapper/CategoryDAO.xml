@@ -2,10 +2,10 @@
 <!DOCTYPE mapper
  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.sist.chodangi.ICategoryDAO">
+<mapper namespace="com.sist.chodangi.common.ICategoryDAO">
 	
 	<!-- list -->
-	<select id="list" resultType="com.sist.chodangi.CategoryDTO">
+	<select id="list" resultType="com.sist.chodangi.common.CategoryDTO">
 		SELECT ID, NAME
 		FROM CATEGORY
 	</select>

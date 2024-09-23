@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.sist.chodangi.IPosterDAO">
+<mapper namespace="com.sist.chodangi.poster.IPosterDAO">
 
 	<select id="search" resultType="Integer">
 		SELECT COUNT(*) AS COUNT
@@ -32,7 +32,7 @@
 				CRYPTPACK.ENCRYPT(#{login_pw}, #{login_pw}), #{name}, #{tel}, #{email}, #{ssn_front})
 	</insert>
 	
-	<select id="posterMypage" resultType="com.sist.chodangi.PosterDTO">
+	<select id="posterMypage" resultType="com.sist.chodangi.poster.PosterDTO">
 		SELECT ID AS pi_id
 			 , P_ID AS p_id
 		     , LOGIN_ID AS login_id
@@ -52,7 +52,7 @@
   		AND P_ID = #{p_id}
 	</select>
 	
-	<select id="appList" resultType="com.sist.chodangi.PosterStatusDTO">
+	<select id="appList" resultType="com.sist.chodangi.poster.PosterStatusDTO">
 		SELECT PAR.ID AS PAR_ID
 		     , P.TITLE AS TITLE 
 		     , TO_CHAR(P.CLOSING_TIME, 'YYYY-MM-DD HH24:MI') AS CLOSING_TIME 
@@ -77,7 +77,7 @@
 		AND PI.P_ID = #{p_id}
 	</select>
 	
-	<select id="offList" resultType="com.sist.chodangi.PosterStatusDTO">
+	<select id="offList" resultType="com.sist.chodangi.poster.PosterStatusDTO">
 		SELECT POR.ID AS POR_ID
 		     , P.TITLE AS TITLE 
 		     , TO_CHAR(P.CLOSING_TIME, 'YYYY-MM-DD HH24:MI') AS CLOSING_TIME 
@@ -102,7 +102,7 @@
 	
 	
 	
-	<select id="endPostingList" resultType="com.sist.chodangi.JobPostingStatusDTO">
+	<select id="endPostingList" resultType="com.sist.chodangi.poster.JobPostingStatusDTO">
 		SELECT DISTINCT SI.NICKNAME AS nickName
              , P.ID AS pId
              , P.TITLE AS title
@@ -130,7 +130,7 @@
 	</select>
 	
 	<!-- NULL 처리 필요, 조회없음 처리 -->
-	<select id="SeekerInfo" resultType="com.sist.chodangi.SeekerDTO">
+	<select id="SeekerInfo" resultType="com.sist.chodangi.seeker.SeekerDTO">
 		SELECT NICKNAME AS nickname
 	         , TEL AS tel
 	         , EMAIL AS email
@@ -158,7 +158,7 @@
 	</update>
 	
 	
-	<select id="companyList" resultType="com.sist.chodangi.PosterCompanyDTO">
+	<select id="companyList" resultType="com.sist.chodangi.poster.PosterCompanyDTO">
 		SELECT PCI.ID AS pci_id
 			 , C.ID AS c_id
 			 , PI.ID AS pi_id
@@ -196,7 +196,7 @@
 	</insert>
 	
 	
-	<select id="searchCompanyList" resultType="com.sist.chodangi.PosterCompanyDTO">
+	<select id="searchCompanyList" resultType="com.sist.chodangi.poster.PosterCompanyDTO">
 		SELECT C.ID AS c_id
 			 , PCI.ID AS pci_id
              , PI.ID AS pi_id
@@ -235,7 +235,7 @@
 		VALUES(SEQ_POSTER_LOG.NEXTVAL, #{p_id}, SYSDATE)
 	</insert>
 	
-	<select id="OfferEndList" resultType="com.sist.chodangi.OfferEndListDTO">
+	<select id="OfferEndList" resultType="com.sist.chodangi.poster.OfferEndListDTO">
 		SELECT P.TITLE AS title
 		     , C.NAME AS company_name
 		     , L.NAME AS location_name 
@@ -262,22 +262,22 @@
 		  AND PI.P_ID = #{p_id}
 	</select>
 	
-	<select id="categoryList" resultType="com.sist.chodangi.CategoryDTO">
+	<select id="categoryList" resultType="com.sist.chodangi.common.CategoryDTO">
 		SELECT ID, NAME
 		FROM CATEGORY
 	</select>
 	
-	<select id="genderList" resultType="com.sist.chodangi.GenderDTO">
+	<select id="genderList" resultType="com.sist.chodangi.common.GenderDTO">
 		SELECT ID, GENDER
 		FROM GENDER
 	</select>
 	
-	<select id="openStatusList" resultType="com.sist.chodangi.OpenStatusDTO">
+	<select id="openStatusList" resultType="com.sist.chodangi.poster.OpenStatusDTO">
 		SELECT ID, STATE
 		FROM OPEN_STATUS
 	</select>
 	
-	<select id="posterCompanyList" resultType="com.sist.chodangi.PosterCompanyDTO">
+	<select id="posterCompanyList" resultType="com.sist.chodangi.poster.PosterCompanyDTO">
 		SELECT PCI.ID AS pci_id
 		     , C.NAME AS name
 		     , C.LOCATION_ID AS location_id

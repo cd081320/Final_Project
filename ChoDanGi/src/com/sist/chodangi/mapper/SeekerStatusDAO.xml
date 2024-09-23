@@ -2,10 +2,10 @@
 <!DOCTYPE mapper
  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.sist.chodangi.ISeekerStatusDAO">
+<mapper namespace="com.sist.chodangi.seeker.ISeekerStatusDAO">
 	
 	<!-- appList -->
-	<select id="appList" resultType="com.sist.chodangi.SeekerStatusDTO">
+	<select id="appList" resultType="com.sist.chodangi.seeker.SeekerStatusDTO">
 		SELECT PAR.ID AS PAR_ID, P.TITLE AS TITLE
 		     , TO_CHAR(P.CLOSING_TIME, 'YYYY-MM-DD HH24:MI') AS CLOSING_TIME
 		     , TO_CHAR(P.WORK_START_TIME, 'YYYY-MM-DD HH24:MI') AS WORK_START_TIME
@@ -30,7 +30,7 @@
 	</select>
 	
 	<!-- offList -->
-	<select id="offList" resultType="com.sist.chodangi.SeekerStatusDTO">
+	<select id="offList" resultType="com.sist.chodangi.seeker.SeekerStatusDTO">
 		SELECT POR.ID AS POR_ID, P.TITLE AS TITLE
 		     , TO_CHAR(P.CLOSING_TIME, 'YYYY-MM-DD HH24:MI') AS CLOSING_TIME
 		     , TO_CHAR(P.WORK_START_TIME, 'YYYY-MM-DD HH24:MI') AS WORK_START_TIME

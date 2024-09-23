@@ -2,15 +2,15 @@
 <!DOCTYPE mapper
  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
- <mapper namespace="com.sist.chodangi.ISeekerInquiryDAO">
+ <mapper namespace="com.sist.chodangi.seeker.ISeekerInquiryDAO">
  	<!-- 구직자의 신고 타입 -->
-	<select id="list" resultType="com.sist.chodangi.SeekerInquiryDTO">
+	<select id="list" resultType="com.sist.chodangi.seeker.SeekerInquiryDTO">
 		SELECT ID, REPORT_TYPE
 		FROM SEEKER_REPORT_TYPE
 	</select>
 	
 	<!-- 관리자시점 구직자들의 신고 리스트 -->
-	<select id="list2" resultType="com.sist.chodangi.SeekerInquiryDTO">
+	<select id="list2" resultType="com.sist.chodangi.seeker.SeekerInquiryDTO">
 		SELECT SR.ID AS ID
 			 , SR.POSTING_ID AS POSTING_ID
 			 , SR.TITLE AS TITLE
@@ -30,7 +30,7 @@
 		VALUES(SEQ_SEEKER_REPORT.NEXTVAL, #{posting_id}, #{s_report_type_id}, #{s_id}, #{status_id}, #{title}, #{content})
 	</insert>
 	
-	<select id="search" resultType="com.sist.chodangi.SeekerInquiryDTO">
+	<select id="search" resultType="com.sist.chodangi.seeker.SeekerInquiryDTO">
 		SELECT ID, POSTING_ID, TITLE, S_REPORT_TYPE,REPORT_DATE, LOGIN_ID, CONTENT
 		FROM S_REPORT_VIEW
 		WHERE ID = #{id}
