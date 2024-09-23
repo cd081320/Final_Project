@@ -15,6 +15,38 @@
 
 <script type="text/javascript" src="http://code.jquery.com/jquery.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script type="text/javascript">
+
+	$(function() {
+		// 로그인 버튼 클릭
+		$("#loginBtn").click(function() {
+			var id = $("#login_id").val();
+			var pw = $("#login_pw").val();
+			
+			$.post("seekerloginajax.action", {login_id : id, login_pw : pw}, function(data) {
+				// data == s_id
+				data = parseInt(data);
+				
+				if (data > 0) {
+					// 로그인 성공
+					alert("로그인 성공");
+					$(location).attr("href", "seekermainpage.action");
+				}
+				else {
+					// 로그인 실패
+					alert("로그인 실패");
+					$(location).attr("href", "seekerlogin.action");
+				}
+				
+			});
+		});
+		
+		
+	});
+
+</script>
+
 </head>
 <body>
 
@@ -56,7 +88,8 @@
 			
 			<!-- 로그인 버튼 -->
 			<div class="col-sm-2">
-				<button type="submit" class="btn btn-success justify-content-center" style="width: 100%; height: 100%;">Login</button>
+				<button type="button" class="btn btn-success justify-content-center" 
+				style="width: 100%; height: 100%;" id="loginBtn">Login</button>
 			</div>
 		</div>
 			

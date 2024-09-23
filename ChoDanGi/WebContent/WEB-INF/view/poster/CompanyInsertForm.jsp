@@ -25,12 +25,15 @@
                 var extraAddr = ''; // 참고항목 변수
 
                 // 사용자가 선택한 주소 타입에 따라 해당 주소 값을 가져온다.
+                addr = data.roadAddress;
+                alert(addr);
+                /* 
                 if (data.userSelectedType === 'R') { // 도로명 주소 선택
                     addr = data.roadAddress;
                 } else { // 지번 주소 선택
                     addr = data.jibunAddress;
                 }
-
+				 */
                 // 법정동으로 필터링
                 if (data.bname) {
                     var legalDongPattern = /^[가-힣]+[동]$/;
@@ -157,7 +160,7 @@
 							        <input type="text" id="sample6_postcode" name="postaddr" class="form-control" placeholder="우편번호" readonly="readonly">
 							        <button class="btn btn-outline-secondary" type="button" onclick="sample6_execDaumPostcode()">우편번호 찾기</button>
 							    </div>
-							    <input type="text" id="sample6_address" class="form-control mt-2" placeholder="주소" readonly="readonly">
+							    <input type="text" id="sample6_address" name="roadaddr" class="form-control mt-2" placeholder="도로명주소" readonly="readonly">
 							    <input type="text" id="sample6_detailAddress" name="location" class="form-control mt-2" placeholder="상세주소">
 							    <input type="text" id="sample6_extraAddress" name="extraAddr" class="form-control mt-2" placeholder="참고항목" readonly="readonly">
 							</div>

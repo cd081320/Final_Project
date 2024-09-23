@@ -1,8 +1,17 @@
+<%@page import="java.time.LocalDateTime"%>
+<%@page import="java.time.LocalDate"%>
+<%@page import="java.time.format.DateTimeFormatter"%>
 <%@ page contentType="text/html; charset=UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%
 	request.setCharacterEncoding("UTF-8");
 	String cp = request.getContextPath();
+	
+	// 날짜 형식
+	DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+	
+	LocalDate today = LocalDate.now();
+	LocalDateTime todayTime = LocalDateTime.now();
 %>
 <!DOCTYPE html>
 <html>
@@ -12,16 +21,218 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 <script type="text/javascript" src="http://code.jquery.com/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-
+<script type="text/javascript" src="<%=cp%>/js/util.js"></script>
 <script type="text/javascript">
 
 	$(function() 
 	{
+		var startDate = $("#startDate");
+		var startTime = $("#startTime");
+		var endDate = $("#endDate");
+		var endTime = $("#endTime");
+		var closingDate = $("#closingDate");
+		var closingTime = $("#closingTime");
+		
+		// 시작 시간 기본값 설정
+		if (getDays(getDate(new Date()), startDate.val()) == 0)	{
+			
+			var startHour = (new Date()).getHours() + 3;
+			for (var i = startHour; i <= 24; i++) {
+				startTime.append("<option value='" + i + "'>" + i + "</option>");
+			}
+		}
+		
+		// 시작 날짜 변경
+		startDate.change(function() {
+			var t = new Date();
+			var today = getDate(t);
+	
+			endDate.val(startDate.val());
+			closingDate.val(startDate.val());
+			
+			// 날짜 제한
+			endDate.attr("min", startDate.val());
+			closingDate.attr("max", startDate.val());
+			
+			// 날짜 초기화
+			endDate.val("");
+			closingDate.val("");
+			
+			// 시간 초기화
+			startTime.empty();
+			startTime.append("<option value='-1'>선택</option>");
+			endTime.empty();
+			endTime.append("<option value='-1'>선택</option>");
+			closingTime.empty();
+			closingTime.append("<option value='-1'>선택</option>");
+			
+			// 시작 시간의 최소값 : 현재 시간 + 3 / 최대값 : 23 or 24
+			if (getDays(today, startDate.val()) == 0)
+			{
+				// 만약 선택한 날짜가 오늘인 경우
+				var startHour = t.getHours() + 3;
+				for (var i = startHour; i <= 23; i++)
+					startTime.append("<option value='" + i + "'>" + i + "</option>");
+			}
+			else
+			{
+				for (var i = 0; i <= 23; i++)
+					startTime.append("<option value='" + i + "'>" + i + "</option>");
+			}
+		});
+		
+		
+		// 시작 시간 변경
+		startTime.change(function() {
+			
+			var t = new Date();
+			var today = getDate(t);
+			
+			// 날짜 초기화
+			endDate.val("");
+			closingDate.val("");
+			
+			// 시간 초기화
+			endTime.empty();
+			endTime.append("<option value='-1'>선택</option>");
+			closingTime.empty();
+			closingTime.append("<option value='-1'>선택</option>");
+		});
+		
+		
+		// 종료 날짜 변경
+		endDate.change(function() {
+			
+			// 시작 날짜 시간을 입력하지 않았으면
+			if (startTime.val() == '-1')
+			{
+				alert("시작 시간을 설정해주세요.");
+				endDate.val("");
+				startDate.focus();
+			}
+			
+			// 종료 시간 초기화
+			endTime.empty();
+			endTime.append("<option value='-1'>선택</option>");
+			
+			if (getDays(startDate.val(), endDate.val()) == 0)
+			{
+				// 시작날짜와 종료날짜 같음
+				var startHour = parseInt(startTime.val()) + 1;
+				for (var i = startHour; i <= 23; i++)
+				{
+					endTime.append("<option value='" + i + "'>" + i + "</option>");
+				}
+			}
+			else if (getDays(startDate.val(), endDate.val()) == 1 && startTime.val() == '24')
+			{
+				// 시작날짜 다음날이 종료날짜 && 시작 시간이 24시
+				for (var i = 1; i <= 23; i++)
+				{
+					endTime.append("<option value='" + i + "'>" + i + "</option>");
+				}
+			}
+			else
+			{
+				for (var i = 0; i <= 23; i++)
+				{
+					endTime.append("<option value='" + i + "'>" + i + "</option>");
+				}
+			}
+		});
+
+		
+		// 지원서 마감 날짜 설정
+		closingDate.change(function() {
+			var t = new Date();
+			var today = getDate(t);
+			
+			// 시작 날짜 시간을 입력하지 않았으면
+			if (startTime.val() == '-1')
+			{
+				alert("시작 시간을 설정해주세요.");
+				closingDate.val("");
+				startDate.focus();
+			}
+			
+			// 마감 시간 초기화
+			closingTime.empty();
+			closingTime.append("<option value='-1'>선택</option>");
+			
+			
+			if (getDays(today, closingDate.val()) == 0)
+			{
+				// 선택한 마감 날짜가 오늘
+				var startHour = t.getHours() + 1;
+
+				if (getDays(closingDate.val(), startDate.val()) == 0)
+				{
+					// 선택한 마감 날짜가 오늘
+					// 선택한 마감 날짜와 시작 날짜가 같음
+					var endHour = startTime.val() - 2;
+					for (var i = startHour; i <= endHour; i++)
+					{
+						closingTime.append("<option value='" + i + "'>" + i + "</option>");
+					}
+				}
+				else if (getDays(closingDate.val(), startDate.val()) == 1 && startTime.val() == '0')
+				{
+					// 선택한 마감 날짜가 오늘
+					// 선택한 마감 날짜 다음날이 시작 날짜 && 시작 시간이 0시
+					for (var i = startHour; i <= 22; i++)
+					{
+						closingTime.append("<option value='" + i + "'>" + i + "</option>");
+					}
+				}
+				else
+				{
+					// 선택한 마감 날짜가 오늘
+					for (var i = startHour; i <= 23; i++)
+					{
+						closingTime.append("<option value='" + i + "'>" + i + "</option>");
+					}
+				}
+			}
+			else 
+			{
+				// 선택한 마감 날짜가 오늘이 아님
+				var startHour = 0;
+				
+				if (getDays(closingDate.val(), startDate.val()) == 0)
+				{
+					// 선택한 마감 날짜가 오늘이 아님
+					// 선택한 마감 날짜와 시작 날짜가 같음
+					var endHour = startTime.val() - 2;
+					for (var i = startHour; i <= endHour; i++)
+					{
+						closingTime.append("<option value='" + i + "'>" + i + "</option>");
+					}
+				}
+				else if (getDays(closingDate.val(), startDate.val()) == 1 && startTime.val() == '0')
+				{
+					// 선택한 마감 날짜가 오늘이 아님
+					// 선택한 마감 날짜 다음날이 시작 날짜 && 시작 시간이 0시
+					for (var i = startHour; i <= 22; i++)
+					{
+						closingTime.append("<option value='" + i + "'>" + i + "</option>");
+					}
+				}
+				else
+				{
+					// 선택한 마감 날짜가 오늘이 아님
+					for (var i = startHour; i <= 23; i++)
+					{
+						closingTime.append("<option value='" + i + "'>" + i + "</option>");
+					}
+				}
+			}
+		});
+		
 		$("#submitBtn").click(function()
 		{
 			// 유효성 검사
 	        var isValid = true;
-
+			
 	        // 필수 입력값 확인
 	        if ($("#pci_id").val() == "") { isValid = false; }
 	        if ($("#title").val() == "") { isValid = false; }
@@ -29,12 +240,12 @@
 	        if ($("#gender_id").val() == "") { isValid = false; }
 	        if (!$("input[name='public_status_id']:checked").val()) { isValid = false; }
 	        if ($("#hourly_wage").val() == "") { isValid = false; }
-	        if ($("#close_date").val() == "") { isValid = false; }
-	        if ($("#close_time").val() == "") { isValid = false; }
-	        if ($("#start_date").val() == "") { isValid = false; }
-	        if ($("#start_time").val() == "") { isValid = false; }
-	        if ($("#end_date").val() == "") { isValid = false; }
-	        if ($("#end_time").val() == "") { isValid = false; }
+	        if (closingDate.val() == "") { isValid = false; }
+	        if (closingTime.val() == "-1") { isValid = false; }
+	        if (startDate.val() == "") { isValid = false; }
+	        if (startTime.val() == "-1") { isValid = false; }
+	        if (endDate.val() == "") { isValid = false; }
+	        if (endTime.val() == "-1") { isValid = false; }
 	        if ($("#work_content").val() == "") { isValid = false; }
 	        if ($("#headcount").val() == "") { isValid = false; }
 
@@ -44,35 +255,50 @@
 	            $("#alertModal").modal('show'); // 모달 열기
 	            return; // 폼 제출 중지
 	        }
+	        
+			var today = getDate(new Date());
 			
+			// 새로운 스케줄의 시작 및 종료 시간을 DateTime 객체로 변환
+			var start, end, closing;
 			
-        	// 모집 마감 날짜와 시간 합치기
-            var closing_date = $("#close_date").val();
-            var closing_time = $("#close_time").val();
-            var full_closing_time = closing_date + " " + closing_time;
-            $("#closing_time").val(full_closing_time);
-            alert("full_closing_time:"+full_closing_time);
-
-            // 근무 시작 날짜와 시간 합치기
-            var work_start_date = $("#start_date").val();
-            var work_start_time = $("#start_time").val();
-            var full_work_start_time = work_start_date + " " + work_start_time;
-            $("#work_start_time").val(full_work_start_time);
-
-            // 근무 종료 날짜와 시간 합치기
-            var work_end_date = $("#end_date").val();
-            var work_end_time = $("#end_time").val();
-            var full_work_end_time = work_end_date + " " + work_end_time;
-            $("#work_end_time").val(full_work_end_time);
-            
+			start = startDate.val() + " " + startTime.val() + ":00";
+			end = endDate.val() + " " + endTime.val() + ":00";
+			closing = closingDate.val() + " " + closingTime.val() + ":00";
+			
+			$("#submitForm").append($("<input>", {type:"hidden", name: "work_start_time", val: start}));
+			$("#submitForm").append($("<input>", {type:"hidden", name: "work_end_time", val: end}));
+			$("#submitForm").append($("<input>", {type:"hidden", name: "closing_time", val: closing}));
             
             $("#submitForm").submit();
 
 		});	
 	});
-
+	
+	// date가 들어오면 yyyy-mm-dd로
+	function getDate(date)
+	{
+		var year = date.getFullYear();
+		var month = ('0' + (date.getMonth() + 1)).slice(-2);
+		var day = ('0' + date.getDate()).slice(-2);
+	
+		var dateString = year + '-' + month  + '-' + day;
+		return dateString;
+	}
+	
+	// date가 들어오면 yyyy-mm-dd hh:mi로
+	function getDateTime(date)
+	{
+		var year = date.getFullYear();
+		var month = ('0' + (date.getMonth() + 1)).slice(-2);
+		var day = ('0' + date.getDate()).slice(-2);
+		var hour = ('0' + date.getHours()).slice(-2);
+		var min = ('0' + date.getMinutes()).slice(-2);
+	
+		var dateString = year + '-' + month  + '-' + day + ' ' + hour + ':' + min;
+		return dateString;
+	}
+	
 </script>
-
 
 </head>
 <body>
@@ -163,13 +389,14 @@
                     </select>
                 </div>
                 
+                <!-- 공개 여부 -->
                 <div class="mb-3">
 				    <label class="form-label">공개 여부</label>
 				    <div>
 				        <c:forEach var="status" items="${openstatusList}">
 				            <div class="form-check">
-				                <input class="form-check-input" type="radio" id="public_status_id" name="public_status_id" value="${status.id}">
-				                <label class="form-check-label" for="public_status_id">
+				                <input class="form-check-input" type="radio" id="public_status_id${status.id}" name="public_status_id" value="${status.id}">
+				                <label class="form-check-label" for="public_status_id${status.id}">
 				                    ${status.state}
 				                </label>
 				            </div>
@@ -184,43 +411,72 @@
                 </div>
                 
                 
-                <!-- 모집 마감 날짜와 시간 -->
-                <div class="row">
-                	<input type="hidden" id="closing_time" name="closing_time" value=""/>
-                    <div class="col-md-6 mb-3">
-                        <label for="closing_date" class="form-label">모집 마감 날짜</label>
-                        <input type="date" class="form-control" id="close_date" name="close_date" required>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label for="closing_time" class="form-label">모집 마감 시간</label>
-                        <input type="time" class="form-control" id="close_time" name="close_time" required>
-                    </div>
-                </div>
-                
                 <!-- 근무 시작 날짜와 시간 -->
-                <div class="row">
-                	<input type="hidden" id="work_start_time" name="work_start_time" value=""/>
-                    <div class="col-md-6 mb-3">
-                        <label for="work_start_date" class="form-label">근무 시작 날짜</label>
-                        <input type="date" class="form-control" id="start_date" name="start_date" required>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label for="work_start_time" class="form-label">근무 시작 시간</label>
-                        <input type="time" class="form-control" id="start_time" name="start_time" required>
-                    </div>
+                <div class="row mb-3">
+                	<div class="col-sm-3"></div>
+                	<div class="col-sm-2">
+							<label for="startDate" class="form-label">시작 시간</label> 
+						</div>
+						<div class="col">
+							<!-- 밤 10시 이후에는 다음날 부터 생성 가능 -->
+							<input type="date" class="form-control" id="startDate" required="required"
+							min="<%=todayTime.getHour() >= 22 ? today.plusDays(1) : today %>" 
+							max="<%=today.plusDays(6) %>" >
+						</div>
+						<div class="col-auto">
+							<select id="startTime" class="form-select">
+								<option value='-1'>선택</option>
+							</select>
+						</div>
+						<div class="col-auto">
+							시
+					</div>
+                	<div class="col-sm-3"></div>
                 </div>
                 
                 <!-- 근무 종료 날짜와 시간 -->
-                <div class="row">
-                	<input type="hidden" id="work_end_time" name="work_end_time" value=""/>
-                    <div class="col-md-6 mb-3">
-                        <label for="work_end_date" class="form-label">근무 종료 날짜</label>
-                        <input type="date" class="form-control" id="end_date" name="end_date" required>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label for="work_end_time" class="form-label">근무 종료 시간</label>
-                        <input type="time" class="form-control" id="end_time" name="end_time" required>
-                    </div>
+                <div class="row mb-3">
+                	<div class="col-sm-3"></div>
+                	<div class="col-sm-2">
+							<label for="endDate" class="form-label">종료 시간</label> 
+						</div>
+						<div class="col">
+							<input type="date" class="form-control" id="endDate" required="required"
+							min="<%=todayTime.getHour() >= 22 ? today.plusDays(1) : today %>" 
+							max="<%=today.plusDays(6) %>"/>
+						</div>
+						<div class="col-auto">
+							<select id="endTime" class="form-select">
+								<option value='-1'>선택</option>
+							</select>
+						</div>
+						<div class="col-auto">
+							시
+					</div>	
+                	<div class="col-sm-3"></div>
+                </div>
+                
+                <!-- 모집 마감 날짜와 시간 -->
+                <div class="row mb-3">
+                	<div class="col-sm-3"></div>
+                	<div class="col-sm-2">
+							<label for="closingDate" class="form-label">지원서 마감 시간</label> 
+						</div>
+						<div class="col">
+							<!-- 밤 10시 이후에는 다음날 부터 생성 가능 -->
+							<input type="date" class="form-control" id="closingDate" required="required"
+							min="<%=today %>" 
+							max="<%=today %>">
+						</div>
+						<div class="col-auto">
+							<select id="closingTime" class="form-select">
+								<option value='-1'>선택</option>
+							</select>
+						</div>
+						<div class="col-auto">
+							시
+					</div>
+                	<div class="col-sm-3"></div>
                 </div>
                 
                 <!-- 근무 내용 -->

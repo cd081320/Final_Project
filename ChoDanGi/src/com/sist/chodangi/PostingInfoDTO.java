@@ -2,10 +2,55 @@ package com.sist.chodangi;
 
 public class PostingInfoDTO
 {
-	private String title, c_name, work_content, l_name, hourly_wage, gender, posting_date, work_start_time, work_end_time, closing_time, postaddr;
-	private int headcount;
+	private String title;			// 제목
+	private String c_name;			// 카테고리 이름
+	private String work_content;	// 근무 내용
+	private String l_name;			// 지역 이름
+	private String hourly_wage;		// 시급
+	private String gender;			// 성별
+	private String posting_date;	// 작성일자
+	private String work_start_time;	// 근무 시작 시간
+	private String work_end_time;	// 근무 종료 일자
+	private String closing_time;	// 마감 일자
+	private String postaddr;		// 우편 번호
+	private String company_name;	// 회사명
+	private String roadaddr;		// 도로명주소
+	private String company_location;// 회사 상세 주소
+	private int headcount;			// 조회수
+	private int id;					// 공고 아이디
 	
-	
+	public String getCompany_location()
+	{
+		return company_location;
+	}
+	public void setCompany_location(String company_location)
+	{
+		this.company_location = company_location;
+	}
+	public String getRoadaddr()
+	{
+		return roadaddr;
+	}
+	public void setRoadaddr(String roadaddr)
+	{
+		this.roadaddr = roadaddr;
+	}
+	public int getId()
+	{
+		return id;
+	}
+	public void setId(int id)
+	{
+		this.id = id;
+	}
+	public String getCompany_name()
+	{
+		return company_name;
+	}
+	public void setCompany_name(String company_name)
+	{
+		this.company_name = company_name;
+	}
 	public String getPostaddr()
 	{
 		return postaddr;

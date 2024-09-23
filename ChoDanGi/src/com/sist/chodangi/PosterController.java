@@ -33,7 +33,7 @@ public class PosterController
 			// 세션에 구직자 번호 저장
 			session.setAttribute("poster", p_id);
 			
-			result = "redirect:postermypage.action";
+			result = "redirect:postermainpage.action";
 		}
 		else 
 		{

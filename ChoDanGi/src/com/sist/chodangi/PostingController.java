@@ -19,9 +19,11 @@ public class PostingController
 		String result = "";
 
 		IPostingInfoDAO dao = sqlSession.getMapper(IPostingInfoDAO.class);
-
-		model.addAttribute("info", dao.info(dto));
-
+		dto = dao.info(dto);
+		model.addAttribute("info", dto);
+		
+		System.out.println(dto.getRoadaddr());
+		
 		result = "seeker/Posting_Info";
 
 		return result;

@@ -15,8 +15,17 @@ public class PosterCompanyDTO
 	private String business_id;		// 사업자 등록 번호
 	private String postaddr;		// 회사 우편번호
 	private String extraAddr;		// 회사 xx동
+	private String roadaddr;		// 도로명주소
 	
 	
+	public String getRoadaddr()
+	{
+		return roadaddr;
+	}
+	public void setRoadaddr(String roadaddr)
+	{
+		this.roadaddr = roadaddr;
+	}
 	public int getC_id()
 	{
 		return c_id;

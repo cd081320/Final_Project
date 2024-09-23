@@ -180,8 +180,8 @@
 	</select>
 	
 	<insert id="CompanyInsert">
-		INSERT INTO COMPANY(ID, LOCATION_ID, NAME, LOCATION, DETAILS, POSTADDR)
-		VALUES(SEQ_COMPANY.NEXTVAL, #{location_id}, #{name}, #{location}, #{details}, #{postaddr})
+		INSERT INTO COMPANY(ID, LOCATION_ID, NAME, LOCATION, DETAILS, POSTADDR, ROADADDR)
+		VALUES(SEQ_COMPANY.NEXTVAL, #{location_id}, #{name}, #{location}, #{details}, #{postaddr}, #{roadaddr})
 	</insert>
 	
 	<select id="searchCompanyId" resultType="Integer">
@@ -214,7 +214,7 @@
 	
 	<update id="CompanyUpdate">
 		UPDATE COMPANY
-		SET LOCATION_ID = #{location_id}, NAME = #{name}, LOCATION = #{location}, DETAILS = #{details}, POSTADDR = #{postaddr}
+		SET LOCATION_ID = #{location_id}, NAME = #{name}, LOCATION = #{location}, DETAILS = #{details}, POSTADDR = #{postaddr}, ROADADDR = #{roadaddr}
 		WHERE ID = #{c_id}
 	</update>	
 	

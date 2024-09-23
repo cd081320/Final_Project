@@ -2,7 +2,7 @@ package com.sist.chodangi;
 
 public class PostingDTO
 {
-	private int p_id;				// 공고 번호
+	private int id;					// 공고 번호
 	private int pci_id;				// 구인자 업체 정보 번호
 	private int location_id;		// 지역 번호
 	private int category_id;		// 분야 번호
@@ -18,13 +18,13 @@ public class PostingDTO
 	private int view_count;			// 조회수
 	private int headcount;			// 모집인원수
 	
-	public int getP_id()
+	public int getId()
 	{
-		return p_id;
+		return id;
 	}
-	public void setP_id(int p_id)
+	public void setId(int id)
 	{
-		this.p_id = p_id;
+		this.id = id;
 	}
 	public int getPci_id()
 	{

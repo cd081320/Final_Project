@@ -17,6 +17,7 @@
 
 	$(function()
 	{
+		var deleteId;
 		(".btnUpdate").click(function() 
 		{
 		     var c_id = $(this).val(); 
@@ -25,6 +26,7 @@
 		
 		 $(".btnDelete").click(function() 
 		 {
+			 alert("213");
 		     deleteId = $(this).val(); 
 		     $('#deleteModal').modal('show');
 		 });

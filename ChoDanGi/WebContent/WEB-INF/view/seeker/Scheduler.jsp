@@ -9,9 +9,6 @@
 
 	StringBuffer sb = new StringBuffer();
 	
-	// 오늘 날짜 구하고
-	// 오늘 부터 7일까지의 날짜, 요일정보 구하기
-	
 	// 날짜 형식
 	DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 	
@@ -525,6 +522,7 @@
 			<div class="modal-body">
 				<!-- 모달 안에 들어갈 폼 또는 내용 -->
 				<form id="scheduleForm" action="" method="post">
+					<!-- 모집 시작 시간 -->
 					<div class="row text-center mb-3">
 						<div class="col-sm-4">
 							<label for="startDate" class="form-label">시작 시간</label> 
@@ -544,6 +542,7 @@
 							시
 						</div>
 					</div>
+					<!-- 모집 종료 시간 -->
 					<div class="row text-center mb-3">
 						<div class="col-sm-4">
 							<label for="endDate" class="form-label">종료 시간</label> 
@@ -562,6 +561,7 @@
 							시
 						</div>
 					</div>
+					<!-- 마감 종료 시간 -->
 					<div class="row text-center mb-3">
 						<div class="col-sm-4">
 							<label for="closingDate" class="form-label">지원서 마감 시간</label> 

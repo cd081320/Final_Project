@@ -8,7 +8,7 @@
 	String cp = request.getContextPath();
 
 	PostingInfoDTO info = (PostingInfoDTO) request.getAttribute("info");
-	String postaddr = info.getPostaddr();
+	String roadaddr = info.getRoadaddr();
 %>
 <!DOCTYPE html>
 <html>
@@ -19,7 +19,7 @@
 <link type="text/css" rel="stylesheet"
 	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
 <script type="text/javascript"
-	src="//dapi.kakao.com/v2/maps/sdk.js?appkey=39b30958de702ff5413727ad451431a4&libraries=services"></script>
+	src="//dapi.kakao.com/v2/maps/sdk.js?appkey=0f5a111258e4dea0337f78ee1c0dbac8&libraries=services"></script>
 <script type="text/javascript"
 	src="http://code.jquery.com/jquery.min.js"></script>
 <script type="text/javascript"
@@ -56,48 +56,42 @@
 </script> -->
 
 <script type="text/javascript">
-document.addEventListener('DOMContentLoaded', function() {
-    
-    container = document.getElementById("map");
-    mapCenter = new kakao.maps.LatLng(37.5565389, 126.9195136);
-    options = {
-       center : mapCenter,
-       level : 3,
-    };
-    map = new kakao.maps.Map(container, options);
-    
-    var geocoder = new kakao.maps.services.Geocoder();
+	$(function() {
+	    
+	    var container = $("#map")[0];
+	    
+		var roadaddr = '<%=roadaddr %>';
+	    var geocoder = new kakao.maps.services.Geocoder();
 
-    // 주소로 좌표를 검색합니다
-    geocoder.addressSearch( <%=postaddr %>, function(result, status) {
-
-        // 정상적으로 검색이 완료됐으면 
-         if (status === kakao.maps.services.Status.OK) {
-
-            var coords = new kakao.maps.LatLng(result[0].y, result[0].x);
-
-            // 결과값으로 받은 위치를 마커로 표시합니다
-            var marker = new kakao.maps.Marker({
-                map: map,
-                position: coords
-            });
-
-            // 인포윈도우로 장소에 대한 설명을 표시합니다
-            var infowindow = new kakao.maps.InfoWindow({
-                content: '<div style="width:150px;text-align:center;padding:6px 0;">약속장소</div>'
-            });
-            infowindow.open(map, marker);
-
-            // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
-            map.setCenter(coords);
-         }
-    });
- });
+	    // 주소로 좌표를 검색합니다
+	    geocoder.addressSearch( roadaddr, function(result, status) {
+	        // 정상적으로 검색이 완료됐으면 
+	         if (status === kakao.maps.services.Status.OK) {
+	
+	            var coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+	
+			    options = {
+			       center : coords,
+			       level : 3,
+			       draggable : false,
+			    };
+			    map = new kakao.maps.Map(container, options);
+			    
+	            // 결과값으로 받은 위치를 마커로 표시합니다
+	            var marker = new kakao.maps.Marker({
+	                map: map,
+	                position: coords,
+	            });
+	
+	            // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
+	            map.setCenter(coords);
+	         }
+	    });
+	 });
 
 </script>
 
 <script type="text/javascript" src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
-
 <!-- 주소 검색, 지도 표시 기능 구현 -->
 <script type="text/javascript">	
     function getAddr()
@@ -121,195 +115,145 @@ document.addEventListener('DOMContentLoaded', function() {
 </head>
 <body>
 
-	<div class="container-fluid">
-		<nav class="navbar navbar-expand-lg bg-light">
-			<a class="navbar-brand" href="seekermainpage.action"> <img
-				src="<%=cp%>/images/alba.jpg" class="img-fluid"
-				style="width: 10%; display: inline-block; vertical-align: middle;"
-				alt="CHODANGIALBA" /> <span
-				class="d-inline-block align-middle ms-2"
-				style="font-size: 28px; font-weight: bold;">CHODANGIALBA</span>
-			</a>
-			<div class="collapse navbar-collapse">
-				<ul class="navbar-nav">
-					<li class="nav-item"><a class="nav-link active"
-						href="seekermypage.action"> <img src="<%=cp%>/images/my.png"
-							style="width: 20px; height: 20px;" alt="MY PAGE" /> MY PAGE
-					</a></li>
-					<li class="nav-item"><a class="nav-link"
-						href="oastatus.action">지원 현황</a></li>
-					<li class="nav-item"><a class="nav-link"
-						href="scheduler.action">스케쥴러</a></li>
-					<li class="nav-item"><a class="nav-link" href="#">공고 리스트</a></li>
-					<li class="nav-item"><a class="nav-link" href="#">업체 즐겨찾기</a>
-					</li>
-				</ul>
+<div class="container-fluid">
+	<nav class="navbar navbar-expand-lg bg-light">
+		<a class="navbar-brand" href="seekermainpage.action"> <img
+			src="<%=cp%>/images/alba.jpg" class="img-fluid"
+			style="width: 10%; display: inline-block; vertical-align: middle;"
+			alt="CHODANGIALBA" /> <span
+			class="d-inline-block align-middle ms-2"
+			style="font-size: 28px; font-weight: bold;">CHODANGIALBA</span>
+		</a>
+		<div class="collapse navbar-collapse">
+			<ul class="navbar-nav">
+				<li class="nav-item">
+					<a class="nav-link active" href="seekermypage.action">
+					<img src="<%=cp%>/images/my.png" style="width: 20px; height: 20px;" alt="MY PAGE" /> MY PAGE</a>
+				</li>
+				<li class="nav-item"><a class="nav-link" href="oastatus.action">지원 현황</a></li>
+				<li class="nav-item"><a class="nav-link" href="scheduler.action">스케쥴러</a></li>
+				<li class="nav-item"><a class="nav-link" href="#">공고 리스트</a></li>
+				<li class="nav-item"><a class="nav-link" href="#">업체 즐겨찾기</a></li>
+			</ul>
+		</div>
+		<a class="navbar-brand" href="logout.action">
+			<span class="d-inline-block align-middle ms-2" style="font-size: medium;">logout</span>
+		</a>
+	</nav>
+</div>
+
+
+<div class="container">
+	<div class="panel-group">
+		<div class="panel panel-default">
+			<div class="panel-heading text-center my-3">
+				<span class="display-6">${info.title}</span>
 			</div>
-			<a class="navbar-brand" href="logout.action"> <span
-				class="d-inline-block align-middle ms-2" style="font-size: medium;">logout</span>
-			</a>
-		</nav>
-	</div>
 
-
-	<div class="container">
-		<div class="panel-group">
-			<div class="panel panel-default">
-				<div class="panel-heading" style="height: 60px;">
-					<span style="font-size: 17pt; font-weight: bold;" class="col-md-3">
-						공고문 상세보기 </span>
-
-				</div>
-
-				<div class="panel-body">
-					<form method="get" id="posting">
-						<table class="table table-striped">
-
-							<tr style="height: 10px;"></tr>
-							<tr style="height: 10px;"></tr>
-
+			<div class="panel-body">
+				<form method="get" id="posting">
+					<table class="table table-striped">
+						<tbody>
 							<tr>
-								<td>
-									<div class="input-group" role="group">
-										<span class="input-group-addon" id="basic-addon2"
-											style="width: 150px;"> 공고제목 </span> <input type="text"
-											id="title" name="title" class="form-control"
-											readonly="readonly" value="${info.title}" />
-									</div>
+								<td class="col-md-2"> 분야 </td>
+								<td class="col-md-auto">
+									<input type="text" id="category" name="category" class="form-control" 
+										readonly="readonly" value="${info.c_name }" />
 								</td>
 							</tr>
-
+	
 							<tr>
+								<td> 근무내용 </td>
 								<td>
-									<div class="input-group" role="group">
-										<span class="input-group-addon" id="basic-addon2"
-											style="width: 150px;"> 분야 </span> <input type="text"
-											id="category" name="category" class="form-control"
-											readonly="readonly" value="${info.c_name }" />
-									</div>
-								</td>
-							</tr>
-
-							<tr>
-								<td><span class="input-group-addon" id="basic-addon2"
-									style="width: 150px;"> 근무내용 </span> <textarea
-										name="work_content" id="work_content" class="form-control"
+									<textarea name="work_content" id="work_content" class="form-control"
 										readonly="readonly" style="height: 200px;">${info.work_content }</textarea>
 								</td>
 							</tr>
-
+	
 							<tr>
+								<td> 주소 </td>
 								<td>
-									<div class="input-group" role="group">
-										<span class="input-group-addon" id="basic-addon2"
-											style="width: 150px;"> 주소 </span> <input type="text"
-											id="location" name="location" class="form-control"
-											readonly="readonly" value="${info.l_name }" />
-									</div>
-									<div id="map" style="width: 500px; height: 400px;"></div>
+									<input type="text" id="location" name="location" class="form-control"
+										readonly="readonly" value="${info.roadaddr } ${info.company_location}" />
+									<div class="container-fluid mt-2" id="map" style="height: 300px;"></div>
 								</td>
 							</tr>
-
+	
 							<tr>
+								<td> 시급 </td>
 								<td>
-									<div class="input-group" role="group">
-										<span class="input-group-addon" id="basic-addon2"
-											style="width: 150px;"> 시급 </span> <input type="text"
-											id="hourly_wage" name="hourly_wage" class="form-control"
+									<input type="text" id="hourly_wage" name="hourly_wage" class="form-control"
 											readonly="readonly" value="${info.hourly_wage }" />
-									</div>
 								</td>
 							</tr>
-
+	
 							<tr>
+								<td> 모집인원수 </td>
 								<td>
-									<div class="input-group" role="group">
-										<span class="input-group-addon" id="basic-addon2"
-											style="width: 150px;"> 모집인원수 </span> <input type="text"
+									<input type="text"
 											id="headcount" name="headcount" class="form-control"
 											readonly="readonly" value="${info.headcount }" />
-									</div>
 								</td>
 							</tr>
-
+	
 							<tr>
+								<td> 희망성별 </td>
 								<td>
-									<div class="input-group" role="group">
-										<span class="input-group-addon" id="basic-addon2"
-											style="width: 150px;"> 희망성별 </span> <input type="text"
+									<input type="text"
 											id="gender" name="gender" class="form-control"
 											readonly="readonly" value="${info.gender }" />
-									</div>
 								</td>
 							</tr>
-
+	
 							<tr>
+								<td> 작성일자 </td>
 								<td>
-									<div class="input-group" role="group">
-										<span class="input-group-addon" id="basic-addon2"
-											style="width: 150px;"> 작성일자 </span> <input type="text"
+									<input type="text"
 											id="posting_date" name="postiong_date" class="form-control"
 											readonly="readonly" value="${info.posting_date }" />
-									</div>
 								</td>
 							</tr>
-
+	
 							<tr>
+								<td> 근무 시작 시간 </td>
 								<td>
-									<div class="input-group" role="group">
-										<span class="input-group-addon" id="basic-addon2"
-											style="width: 150px;"> 근무 시작 시간 </span> <input type="text"
-											id="work_start_time" name="work_start_time"
+									<input type="text" id="work_start_time" name="work_start_time"
 											class="form-control" readonly="readonly"
 											value="${info.work_start_time }" />
-									</div>
 								</td>
 							</tr>
-
+	
 							<tr>
+								<td> 근무 종료 시간 </td>
 								<td>
-									<div class="input-group" role="group">
-										<span class="input-group-addon" id="basic-addon2"
-											style="width: 150px;"> 근무 종료 시간 </span> <input type="text"
+									<input type="text"
 											id="work_end_time" name="work_end_time" class="form-control"
 											readonly="readonly" value="${info.work_end_time }" />
-									</div>
 								</td>
 							</tr>
-
+	
 							<tr>
+								<td> 모집 마감 시간 </td>
 								<td>
-									<div class="input-group" role="group">
-										<span class="input-group-addon" id="basic-addon2"
-											style="width: 150px;"> 모집 마감 시간 </span> <input type="text"
+									<input type="text"
 											id="closing_time" name="closing_time" class="form-control"
 											readonly="readonly" value="${info.closing_time }" />
-									</div>
 								</td>
 							</tr>
-							<tr style="height: 10px;"></tr>
-
-							<tr>
-								<td style="height: 10px;"></td>
+							<tr class="text-center">
+								<td colspan="2">
+									<a href="#" role="button" class="btn btn-primary" id="btnAdd">지원하기</a>
+									<a href="postinglist.action" role="button" class="btn btn-secondary" id="btnAdd">닫기</a>
+								</td>
 							</tr>
 
-
-
-
-							<tr>
-								<td style="text-align: center;"><span class="col-md-9">
-										<a href="posterinquirylist.action" role="button"
-										class="btn btn-success btn-xs" id="btnAdd"
-										style="vertical-align: bottom;">닫기</a>
-								</span></td>
-							</tr>
-
-						</table>
-					</form>
-				</div>
+						</tbody>
+					</table>
+				</form>
 			</div>
 		</div>
 	</div>
+</div>
 
 
 </body>

@@ -18,19 +18,25 @@ public class SeekerController
 	
 	// 구직자 회원가입 폼 요청 페이지
 	@RequestMapping(value = "seekersignupform.action")
-	public String seekerSignupForm(Model model)
+	public String seekerSignupForm(Model model, HttpSession session)
 	{
 		String result = "";
 		
-		// 지역 리스트 보내주기
-		ILocationDAO locationDAO = sqlSession.getMapper(ILocationDAO.class);
-		model.addAttribute("list1", locationDAO.topList());
-		
-		// 분야 리스트 보내주기
-		ICategoryDAO categoryDAO = sqlSession.getMapper(ICategoryDAO.class);
-		model.addAttribute("categoryList", categoryDAO.list());
-		
-		result = "/seeker/SignupForm";
+		// 세션 정보 확인
+		if (session.getAttribute("seeker") == null)
+			result = "redirect:logout.action";
+		else
+		{
+			// 지역 리스트 보내주기
+			ILocationDAO locationDAO = sqlSession.getMapper(ILocationDAO.class);
+			model.addAttribute("list1", locationDAO.topList());
+			
+			// 분야 리스트 보내주기
+			ICategoryDAO categoryDAO = sqlSession.getMapper(ICategoryDAO.class);
+			model.addAttribute("categoryList", categoryDAO.list());
+			
+			result = "/seeker/SignupForm";
+		}
 		
 		return result;
 	}
@@ -67,30 +73,39 @@ public class SeekerController
 		return result;
 	}
 	
+	@RequestMapping(value = "seekerloginajax.action")
+	public @ResponseBody String seekerLoginAjax(SeekerDTO seeker, HttpSession session)
+	{
+		String result = "";
+		ISeekerDAO seekerDAO = sqlSession.getMapper(ISeekerDAO.class);
+		
+		int s_id = seekerDAO.login(seeker);
+		
+		if (s_id != 0)
+		{
+			// 로그인 성공
+			// 세션에 구직자 번호 저장
+			session.setAttribute("seeker", s_id);	
+		}
+		
+		result = String.valueOf(s_id);
+		
+		return result;
+	}
+	
 	// 구직자 로그인 요청 페이지
 	@RequestMapping(value = "seekerlogin.action")
 	public String SeekerLogin(SeekerDTO seeker, HttpSession session)
 	{
 		String result = "";
 		
-		ISeekerDAO seekerDAO = sqlSession.getMapper(ISeekerDAO.class);
-		
-		// 구직자 번호 알아내기
-		int s_id = seekerDAO.login(seeker);
-		
-		if (s_id != 0)
+		// 세션 정보 확인
+		if (session.getAttribute("seeker") == null)
+			result = "redirect:logout.action";
+		else
 		{
 			// 로그인 성공
-
-			// 세션에 구직자 번호 저장
-			session.setAttribute("seeker", s_id);
-			
 			result = "redirect:seekermypage.action";
-		}
-		else 
-		{
-			// 로그인 실패
-			result = "redirect:loginform.action";
 		}
 		
 		return result;
@@ -217,11 +232,21 @@ public class SeekerController
 	
 	// 구직자 공고리스트
 	@RequestMapping(value = "postinglist.action")
-	public String postingList()
+	public String postingList(Model model, HttpSession session)
 	{
 		String result = "";
-		
-		result = "seeker/PostingList";
+		// 세션 정보 확인
+		if (session.getAttribute("seeker") == null)
+			result = "redirect:logout.action";
+		else
+		{
+			// 전체 공고 받아오기
+			IPostingInfoDAO dao = sqlSession.getMapper(IPostingInfoDAO.class);
+			
+			model.addAttribute("postingList", dao.list());
+					
+			result = "seeker/PostingList";
+		}
 		
 		return result;
 	}

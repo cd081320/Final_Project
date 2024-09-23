@@ -2,7 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%
 	request.setCharacterEncoding("UTF-8");
-String cp = request.getContextPath();
+	String cp = request.getContextPath();
 %>
 <!DOCTYPE html>
 <html>
@@ -14,6 +14,15 @@ String cp = request.getContextPath();
 
 <script type="text/javascript" src="http://code.jquery.com/jquery.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script type="text/javascript">
+
+	$(function() {
+		$(".detailBtn").click(function() {
+			$(location).attr("href", "posting.action?id=" + $(this).val());
+		});
+	});
+
+</script>
 </head>
 <body>
 
@@ -89,15 +98,48 @@ String cp = request.getContextPath();
 		<!-- 카드 바디 -->
 		<div class="card-body">
 			<div class="row">
-				<c:forEach items="${list }" var="dto">
+				<c:forEach items="${postingList }" var="dto">
 				<div class="col-md-3">
 					<%-- 공고들 --%>
 					<div class="card">
 						<div class="card-header">
+							<h5>${dto.title }</h5>
 						</div>
 						<div class="card-body">
+							<div class="form-control">
+								<span class="text-black">공고 마감 :</span> 
+								<span class="badge bg-secondary">${dto.closing_time}</span>
+							</div>
+							<div class="form-control">
+								<span class="text-black">시급 :</span> 
+								<span class="badge bg-secondary">${dto.hourly_wage} 원</span>
+							</div>
+							<div class="form-control">
+								<span class="text-black">회사/업체명 :</span> 
+								<span class="badge bg-secondary">${dto.company_name}</span>
+							</div>
+							<div class="form-control">
+								<span class="text-black">모집 인원 수 :</span> 
+								<span class="badge bg-secondary">${dto.headcount}</span>
+							</div>
+							<div class="form-control">
+								<span class="text-black">근무지 위치 :</span> 
+								<span class="badge bg-secondary">${dto.l_name}</span>
+							</div>
+							<div class="form-control">
+								<span class="text-black">분야 :</span> 
+								<span class="badge bg-secondary">${dto.c_name}</span>
+							</div>
+							<div class="form-control">
+								<span class="text-black">근무 시간 :</span> 
+								<span class="badge bg-secondary">${dto.work_start_time} ~ ${dto.work_end_time}</span>
+							</div>
 						</div>
+						
 						<div class="card-footer d-flex justify-content-between">
+							<span class="text-black">마감 :</span> 
+							<span>${dto.closing_time}</span>
+							<button class="btn btn-primary detailBtn" value="${dto.id }">상세</button>
 						</div>
 					</div>
 				</div>
@@ -107,61 +149,8 @@ String cp = request.getContextPath();
 		</div>
 		<!-- 카드 바디 -->
 		
-		
-		
 	</div>	
-	<!-- 공고 리스트 -->
-	<div class="row">
-		<c:forEach var="dto" items="${list }">
-			<div class="col-md-6 mb-4">
-				<div class="card">
-					<div class="card-header">
-						<h5>${dto.title}</h5>
-					</div>
-					<div class="card-body">
-						<div class="form-control">
-							<span class="text-black">공고 마감시간 :</span> 
-							<span class="badge bg-secondary">${dto.closing_time}</span>
-						</div>
-						<div class="form-control">
-							<span class="text-black">시급 :</span> 
-							<span class="badge bg-secondary">${dto.hourly_wage}</span>
-						</div>
-						<div class="form-control">
-							<span class="text-black">회사/업체명 :</span> 
-							<span class="badge bg-secondary">${dto.company_name}</span>
-						</div>
-						<div class="form-control">
-							<span class="text-black">모집 인원 수 :</span> 
-							<span class="badge bg-secondary">${dto.headcount}</span>
-						</div>
-						<div class="form-control">
-							<span class="text-black">근무지 위치 :</span> 
-							<span class="badge bg-secondary">${dto.location_name}</span>
-						</div>
-						<div class="form-control">
-							<span class="text-black">근무 시간 :</span> 
-							<span class="badge bg-secondary">${dto.work_start_time} ~ ${dto.work_end_time}</span>
-						</div>
-					</div>
-				</div>
-			</div>
-		</c:forEach>
-	</div>
 </div>
 	
-
-	
-	
-<script>
-	// 토글 버튼 클릭 시 사이드바 보이기/숨기기
-	const toggleBtn = document.getElementById("toggle-btn");
-	const sidebar = document.getElementById("sidebar");
-
-	toggleBtn.addEventListener("click", function() {
-		sidebar.classList.toggle("hide");
-	});
-</script>
-
 </body>
 </html>

@@ -22,10 +22,16 @@ public class LoginController
 	// 만약 memberType이 없다면 seeker의 로그인 페이지로
 	// 만약 이미 로그인이 되어 있다면 되어있는 곳으로
 	@RequestMapping(value = "/loginform.action")
-	public String loginForm(String memberType)
+	public String loginForm(String memberType, HttpSession session)
 	{
 		String result = "";
-		if (memberType == null)
+		if (session.getAttribute("seeker") != null)
+			result = "redirect:seekermainpage.action";
+		else if (session.getAttribute("poster") != null)
+			result = "redirect:postermainpage.action";
+		else if (session.getAttribute("admin") != null)
+			result = "redirect:adminlogin.action";
+		else if (memberType == null)
 			result = "/seeker/LoginForm";
 		else
 			result = "/" + memberType + "/LoginForm";
