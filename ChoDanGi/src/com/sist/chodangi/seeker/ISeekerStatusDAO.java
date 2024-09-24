@@ -17,6 +17,8 @@ public interface ISeekerStatusDAO
 	// POSTING_APP_RESPONSE 데이터 삭제
 	public int removePAR(int id);
 	// POSTING_APPLICATION 데이터 삭제
-	public int removePA(int p_application_id);
+	public int removePA(int p_id);
+	// POSTING_APP_RESPONSE 데이터 확인
+	public int searchPAR(int id);
 	
 }

@@ -87,8 +87,14 @@
 	            map.setCenter(coords);
 	         }
 	    });
+	    
+	    // 지원하기 버튼
+	    $("#appBtn").click(function() {
+			$(location).attr("href", "seekerapplication.action?posting_id=" + ${info.id });
+		});
+	    
 	 });
-
+	
 </script>
 
 <script type="text/javascript" src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
@@ -151,105 +157,104 @@
 			</div>
 
 			<div class="panel-body">
-				<form method="get" id="posting">
-					<table class="table table-striped">
-						<tbody>
-							<tr>
-								<td class="col-md-2"> 분야 </td>
-								<td class="col-md-auto">
-									<input type="text" id="category" name="category" class="form-control" 
-										readonly="readonly" value="${info.c_name }" />
-								</td>
-							</tr>
-	
-							<tr>
-								<td> 근무내용 </td>
-								<td>
-									<textarea name="work_content" id="work_content" class="form-control"
-										readonly="readonly" style="height: 200px;">${info.work_content }</textarea>
-								</td>
-							</tr>
-	
-							<tr>
-								<td> 주소 </td>
-								<td>
-									<input type="text" id="location" name="location" class="form-control"
-										readonly="readonly" value="${info.roadaddr } ${info.company_location}" />
-									<div class="container-fluid mt-2" id="map" style="height: 300px;"></div>
-								</td>
-							</tr>
-	
-							<tr>
-								<td> 시급 </td>
-								<td>
-									<input type="text" id="hourly_wage" name="hourly_wage" class="form-control"
-											readonly="readonly" value="${info.hourly_wage }" />
-								</td>
-							</tr>
-	
-							<tr>
-								<td> 모집인원수 </td>
-								<td>
-									<input type="text"
-											id="headcount" name="headcount" class="form-control"
-											readonly="readonly" value="${info.headcount }" />
-								</td>
-							</tr>
-	
-							<tr>
-								<td> 희망성별 </td>
-								<td>
-									<input type="text"
-											id="gender" name="gender" class="form-control"
-											readonly="readonly" value="${info.gender }" />
-								</td>
-							</tr>
-	
-							<tr>
-								<td> 작성일자 </td>
-								<td>
-									<input type="text"
-											id="posting_date" name="postiong_date" class="form-control"
-											readonly="readonly" value="${info.posting_date }" />
-								</td>
-							</tr>
-	
-							<tr>
-								<td> 근무 시작 시간 </td>
-								<td>
-									<input type="text" id="work_start_time" name="work_start_time"
-											class="form-control" readonly="readonly"
-											value="${info.work_start_time }" />
-								</td>
-							</tr>
-	
-							<tr>
-								<td> 근무 종료 시간 </td>
-								<td>
-									<input type="text"
-											id="work_end_time" name="work_end_time" class="form-control"
-											readonly="readonly" value="${info.work_end_time }" />
-								</td>
-							</tr>
-	
-							<tr>
-								<td> 모집 마감 시간 </td>
-								<td>
-									<input type="text"
-											id="closing_time" name="closing_time" class="form-control"
-											readonly="readonly" value="${info.closing_time }" />
-								</td>
-							</tr>
-							<tr class="text-center">
-								<td colspan="2">
-									<a href="seekerapplication.action?id=${info.id }" role="button" class="btn btn-primary" id="appBtn">지원하기</a>
-									<a href="postinglist.action" role="button" class="btn btn-secondary" id="closeBtn">닫기</a>
-								</td>
-							</tr>
+				<table class="table table-striped">
+					<tbody>
+						<tr>
+							<td class="col-md-2"> 분야 </td>
+							<td class="col-md-auto">
+								<input type="text" id="category" name="category" class="form-control" 
+									readonly="readonly" value="${info.c_name }" />
+							</td>
+						</tr>
 
-						</tbody>
-					</table>
-				</form>
+						<tr>
+							<td> 근무내용 </td>
+							<td>
+								<textarea name="work_content" id="work_content" class="form-control"
+									readonly="readonly" style="height: 200px;">${info.work_content }</textarea>
+							</td>
+						</tr>
+
+						<tr>
+							<td> 주소 </td>
+							<td>
+								<input type="text" id="location" name="location" class="form-control"
+									readonly="readonly" value="${info.roadaddr } ${info.company_location}" />
+								<div class="container-fluid mt-2" id="map" style="height: 300px;"></div>
+							</td>
+						</tr>
+
+						<tr>
+							<td> 시급 </td>
+							<td>
+								<input type="text" id="hourly_wage" name="hourly_wage" class="form-control"
+										readonly="readonly" value="${info.hourly_wage }" />
+							</td>
+						</tr>
+
+						<tr>
+							<td> 모집인원수 </td>
+							<td>
+								<input type="text"
+										id="headcount" name="headcount" class="form-control"
+										readonly="readonly" value="${info.headcount }" />
+							</td>
+						</tr>
+
+						<tr>
+							<td> 희망성별 </td>
+							<td>
+								<input type="text"
+										id="gender" name="gender" class="form-control"
+										readonly="readonly" value="${info.gender }" />
+							</td>
+						</tr>
+
+						<tr>
+							<td> 작성일자 </td>
+							<td>
+								<input type="text"
+										id="posting_date" name="postiong_date" class="form-control"
+										readonly="readonly" value="${info.posting_date }" />
+							</td>
+						</tr>
+
+						<tr>
+							<td> 근무 시작 시간 </td>
+							<td>
+								<input type="text" id="work_start_time" name="work_start_time"
+										class="form-control" readonly="readonly"
+										value="${info.work_start_time }" />
+							</td>
+						</tr>
+
+						<tr>
+							<td> 근무 종료 시간 </td>
+							<td>
+								<input type="text"
+										id="work_end_time" name="work_end_time" class="form-control"
+										readonly="readonly" value="${info.work_end_time }" />
+							</td>
+						</tr>
+
+						<tr>
+							<td> 모집 마감 시간 </td>
+							<td>
+								<input type="text"
+										id="closing_time" name="closing_time" class="form-control"
+										readonly="readonly" value="${info.closing_time }" />
+							</td>
+						</tr>
+						<tr class="text-center">
+							<td colspan="2">
+								<button class='btn btn-primary' id="appBtn" 
+								 ${isApp > 0 ? "class='btn btn-primary' disabled='disabled'" : "" }>지원하기</button>
+								<a href="javascript:history.back();" role="button" class="btn btn-secondary" id="closeBtn">닫기</a>
+							</td>
+						</tr>
+
+					</tbody>
+				</table>
 			</div>
 		</div>
 	</div>

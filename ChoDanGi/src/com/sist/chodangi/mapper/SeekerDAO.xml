@@ -98,4 +98,12 @@
 		FROM SEEKER_INFO
 		WHERE S_ID = #{s_id}
 	</select>
+	
+	<!-- modify -->
+	<!-- 구직자 개인정보 수정 -->
+	<update id="modify">
+		UPDATE SEEKER_INFO
+		SET LOGIN_ID = #{login_id}, NICKNAME = #{nickname}, NAME = #{name}, TEL = #{tel}, EMAIL = #{email}, SSN_FRONT = #{ssn_front}
+		WHERE S_ID = #{s_id}
+	</update>
 </mapper>

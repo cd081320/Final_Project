@@ -2,9 +2,22 @@ package com.sist.chodangi.seeker;
 
 public class SeekerStatusDTO
 {
-	private int par_id, por_id, c_id, p_id, s_id, status_id;
-	private int count, headcount, hourly_wage;
-	private String title, closing_time, work_start_time, work_end_time, location_name, state, company_name;
+	private int par_id;				// 공고 지원 응답 번호
+	private int por_id;				// 공고 제안 응답 번호
+	private int c_id;				// 회사 번호
+	private int p_id;				// 공고 번호
+	private int s_id;				// 구직자 번호
+	private int status_id;			// 공고 상태 번호
+	private int count;				// 조회수
+	private int headcount;			// 모집인원
+	private int hourly_wage;		// 시급
+	private String title;			// 제목
+	private String closing_time;	// 마감 시간
+	private String work_start_time;	// 시작 시간
+	private String work_end_time;	// 종료 시간
+	private String location_name;	// 지역 이름
+	private String state;			// 상태
+	private String company_name;	// 회사명
 	
 
 	public int getStatus_id()

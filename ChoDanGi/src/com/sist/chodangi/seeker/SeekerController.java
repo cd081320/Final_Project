@@ -211,6 +211,53 @@ public class SeekerController
 		return result;
 	}
 	
+	
+	// 구직자 개인정보 변경 폼
+	@RequestMapping(value = "seekermypageupdateform.action")
+	public String seekerMyPageUpdateForm(HttpSession session, Model model)
+	{
+		String result = "";
+		
+		// 세션 정보 확인
+		if (session.getAttribute("seeker") == null)
+			result = "redirect:logout.action";
+		else
+		{
+			int s_id = (int)session.getAttribute("seeker");
+			
+			ISeekerDAO seekerDAO = sqlSession.getMapper(ISeekerDAO.class);
+			
+			model.addAttribute("dto", seekerDAO.searchById(s_id));
+			
+			result = "seeker/MypageUpdateForm";
+		}
+		
+		return result;
+	}
+	
+	
+	// 구직자 개인정보 변경
+	@RequestMapping(value = "seekermypageupdate.action")
+	public String seekerMyPageUpdate(HttpSession session, SeekerDTO dto)
+	{
+		String result = "";
+		
+		// 세션 정보 확인
+		if (session.getAttribute("seeker") == null)
+			result = "redirect:logout.action";
+		else
+		{
+			ISeekerDAO seekerDAO = sqlSession.getMapper(ISeekerDAO.class);
+			
+			seekerDAO.modify(dto);
+			
+			result = "redirect:seekermypage.action";
+		}
+		
+		return result;
+	}
+	
+	
 	// 구직자 스케쥴러
 	@RequestMapping(value = "scheduler.action")
 	public String scheduler(HttpSession session, Model model)
@@ -225,10 +272,13 @@ public class SeekerController
 		{
 			s_id = (int)session.getAttribute("seeker");
 			
+			// 내 오픈 지원서 리스트
 			IOpenApplicationDAO oaDAO = sqlSession.getMapper(IOpenApplicationDAO.class);
 			
 			model.addAttribute("oaList", oaDAO.list(s_id));			
 			result = "/seeker/Scheduler";
+			
+			// 최종 수락된 지원/제안 리스트
 		}
 		
 		return result;
@@ -331,19 +381,50 @@ public class SeekerController
 	}
 	
 	// 구직자 지원 취소
+	// 응답이 없음
 	@RequestMapping(value = "seekercancelapplication.action")
-	public @ResponseBody String seekerCancelApplication(int id)
+	public @ResponseBody String seekerCancelApplication(HttpSession session, PostingApplicationDTO dto)
 	{
 		String result = "";
+		
+		// 세션 정보 확인
+		if (session.getAttribute("seeker") == null)
+			return result;
 
-		ISeekerStatusDAO ssDAO = sqlSession.getMapper(ISeekerStatusDAO.class);
-		int p_application_id = ssDAO.getP_application_id(id);
-		
-		// 응답 삭제
-		ssDAO.removePAR(id);
-		
+		IPostingApplicationDAO dao = sqlSession.getMapper(IPostingApplicationDAO.class);
+		int id = dao.search(dto);
+	
 		// 지원 삭제
-		ssDAO.removePA(p_application_id);
+		dao.remove(id);
+		
+		result = "success";
+		
+		return result;
+	}
+	
+	
+	// 구직자 공고 지원
+	@RequestMapping(value = "seekerapplication.action")
+	public String seekerApplication(HttpSession session, PostingApplicationDTO dto)
+	{
+		String result = "";
+		
+		// 세션 정보 확인
+		if (session.getAttribute("seeker") == null)
+			result = "redirect:logout.action";
+		else
+		{
+			int s_id = (int)session.getAttribute("seeker");
+			
+			IPostingApplicationDAO dao = sqlSession.getMapper(IPostingApplicationDAO.class);
+			
+			dto.setS_id(s_id);
+
+			// POSTING_APPLICATION INSERT
+			dao.add(dto);
+			
+			result = "redirect:postinglist.action";
+		}
 		
 		return result;
 	}

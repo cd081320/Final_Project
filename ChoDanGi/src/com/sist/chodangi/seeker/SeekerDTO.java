@@ -2,10 +2,19 @@ package com.sist.chodangi.seeker;
 
 public class SeekerDTO
 {
-	// 식별 아이디, 성별코드, 지역코드
-	private int id, gender_id, location_id;
-	// 로그인 아이디, 로그인 비밀번호, 닉네임, 이름, 전화번호, 이메일, 주민번호 앞자리, 상세 주소
-	private String login_id, login_pw, nickname, name, tel, email, ssn_front, addr_detail;
+	
+	private int id;				// 식별 아이디
+	private int gender_id;		// 성별코드
+	private int location_id;	// 지역코드
+	private String login_id;	// 로그인 아이디
+	private String login_pw;	// 로그인 비밀번호
+	private String nickname;	// 닉네임
+	private String name;		// 이름
+	private String tel;			// 전화번호
+	private String email;		// 이메일
+	private String ssn_front;	// 주민번호 앞자리
+	private String addr_detail;	// 상세 주소
+	
 	public int getId()
 	{
 		return id;

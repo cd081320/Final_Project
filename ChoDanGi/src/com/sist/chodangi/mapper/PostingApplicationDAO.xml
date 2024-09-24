@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sist.chodangi.seeker.IPostingApplicationDAO">
+	<!-- add -->
+	<insert id="add">
+		INSERT INTO POSTING_APPLICATION (ID, S_ID, POSTING_ID)
+		VALUES (SEQ_POSTING_APPLICATION.NEXTVAL, #{s_id}, #{posting_id})
+	</insert>
+	
+	<!-- search -->
+	<select id="search" resultType="int">
+		SELECT NVL(MAX(ID), 0) AS ID
+		FROM POSTING_APPLICATION
+		WHERE S_ID = #{s_id}
+		  AND POSTING_ID = #{posting_id}
+	</select>
+	
+	<!-- remove -->
+	<delete id="remove">
+		DELETE
+		FROM POSTING_APPLICATION
+		WHERE ID = #{id}
+	</delete>
+</mapper>

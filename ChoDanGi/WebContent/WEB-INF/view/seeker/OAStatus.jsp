@@ -21,12 +21,12 @@
 		
 		// 공고 상세 보기
 		$(".posting").click(function() {
-			$(location).attr("href", "posting.action");
+			$(location).attr("href", "posting.action?id=" + $(this).val());
 		});
 		
 		// 지원 취소
 		$("#cancel").click(function() {
-			$.post("seekercancelapplication.action", {id: $(this).val()}, function() {
+			$.post("seekercancelapplication.action", {posting_id: $(this).val(), s_id: <%=(int)session.getAttribute("seeker") %>}, function(data) {
 				alert("지원을 취소하였습니다.");
 				location.reload();
 			});			
@@ -167,20 +167,23 @@
 									</div>
 									<div class="card-footer d-flex justify-content-between">
 										<button type="button" class="btn btn-outline-success btn-sm posting" value="${dto.p_id }">공고 상세</button>
+										<!-- 1. 지원만 했을 때 == 상대방이 미응답일 때  -> 응답 테이블에 데이터가 없음 -->
+										<!-- 2. 지원을 했고 상대방이 수락했을 때 -> 응답 테이블에 데이터가 있음 -->
+										<!-- 3. 지원을 했고 상대방이 거절했을 때 -> 응답 테이블에 데이터가 있음 -->
 										<c:choose>
-											<%-- 지원자 지원 미응답 상태 --%>
-											<c:when test="${dto.status_id == 1 }">
-												<button type="button" class="btn btn-outline-danger btn-sm" id="cancel" value="${dto.par_id }">지원 취소</button>
-											</c:when>
 											<%-- 구인자 지원 수락 상태 --%>
 											<c:when test="${dto.status_id == 2 }">
 												<button type="button" class="btn btn-outline-primary btn-sm" id="finalYes" value="${dto.par_id }">최종 수락</button>
 												<button type="button" class="btn btn-outline-danger btn-sm" id="cancel" value="${dto.par_id }">최종 거절</button>
 											</c:when>
 											<%-- 구인자 지원 거절 상태 --%>
-											<c:when test="${dto.status_id == 2 }">
+											<c:when test="${dto.status_id == 3 }">
 												<button type="button" class="btn btn-outline-secondary btn-sm" id="">삭제</button>
 											</c:when>
+											<%-- 지원자 지원 미응답 상태 --%>
+											<c:otherwise>
+												<button type="button" class="btn btn-outline-danger btn-sm" id="cancel" value="${dto.p_id }">지원 취소</button>
+											</c:otherwise>
 										</c:choose>
 									</div>
 								</div>
