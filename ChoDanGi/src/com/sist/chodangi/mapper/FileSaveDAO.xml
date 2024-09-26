@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sist.chodangi.common.IFileSaveDAO">
+	<!-- add -->
+	<insert id="add">
+		INSERT INTO FILE_SAVE (ID, FILE_LOCATION_ID, NAME)
+		VALUES (SEQ_FILE_SAVE.NEXTVAL, #{file_location_id}, #{name})
+	</insert>
+	<!-- modify -->
+	<update id="modify">
+		UPDATE FILE_SAVE
+		SET NAME = #{name}, FILE_LOCATION_ID = #{file_location_id}
+		WHERE ID = #{id}
+	</update>
+	<!-- remove -->
+	<delete id="remove">
+		DELETE
+		FROM FILE_SAVE
+		WHERE ID = #{id}
+	</delete>
+</mapper>

@@ -178,8 +178,11 @@
                 <div class="card-header bg-info text-white text-center">
                     <h5 class="card-title mb-0">${dto.nickname }님의 마이페이지</h5>
                 </div>
+                
                 <div class="card-body">
                     <div class="mb-3 text-center">
+                    	
+                    	<!-- 개인 프로필 이미지 -->
                         <img src="images/alba.jpg" class="rounded-circle" alt="Profile Picture" style="width: 150px; height: 150px; object-fit: cover;">
                         <div class="mb-3 text-center">
                             <input type="file" id="profileImage" name="profileImage" class="form-control d-inline-block" style="width: auto;" />

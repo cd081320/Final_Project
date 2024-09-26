@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sist.chodangi.seeker.ISeekerPhotoDAO">
+	<!-- add -->
+	<insert id="add">
+		INSERT INTO SEEKER_PROFILE_PHOTO (ID, S_ID, FILE_ID)
+		VALUES (SEQ_SEEKER_PROFILE_PHOTO.NEXTVAL, #{s_id}, #{file_id})
+	</insert>
+	<!-- search -->
+	<select id="search" resultType="com.sist.chodangi.seeker.seekerPhotoDTO">
+		SELECT ID, S_ID, FILE_ID, PATH, FILE_NAME
+		FROM FILE_VIEW
+		WHERE S_ID = #{s_id}
+	</select>
+	<!-- modify -->
+	<update id="modify"></update>
+	<!-- remove -->
+	<delete id="remove"></delete>
+</mapper>

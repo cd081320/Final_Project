@@ -205,6 +205,9 @@ public class SeekerController
 			
 			model.addAttribute("dto", seekerDAO.searchById(s_id));
 			
+			// 사진 정보 가져오기
+			
+			
 			result = "/seeker/MyPage";
 		}
 		
