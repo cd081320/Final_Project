@@ -1,5 +1,8 @@
 package com.sist.chodangi.seeker;
 
+import java.io.File;
+import java.io.IOException;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -8,9 +11,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.sist.chodangi.common.FileSaveDTO;
 import com.sist.chodangi.common.ICategoryDAO;
+import com.sist.chodangi.common.IFileSaveDAO;
 import com.sist.chodangi.common.ILocationDAO;
 import com.sist.chodangi.common.IOpenApplicationDAO;
 import com.sist.chodangi.common.IPostingInfoDAO;
@@ -20,6 +27,7 @@ public class SeekerController
 {
 	@Autowired
 	private SqlSession sqlSession;
+	private String projectPath = System.getProperty("user.dir");
 	
 	// 구직자 회원가입 폼 요청 페이지
 	@RequestMapping(value = "seekersignupform.action")
@@ -206,9 +214,97 @@ public class SeekerController
 			model.addAttribute("dto", seekerDAO.searchById(s_id));
 			
 			// 사진 정보 가져오기
+			ISeekerPhotoDAO photoDAO = sqlSession.getMapper(ISeekerPhotoDAO.class);
+			SeekerPhotoDTO photo = photoDAO.search(s_id);
+			// 가져올 사진이 있다면
+			if (photo != null)
+				model.addAttribute("photo", photo);
 			
 			
 			result = "/seeker/MyPage";
+		}
+		
+		return result;
+	}
+	
+	
+	// 구직자 개인 사진 변경 ajax
+	@RequestMapping(value = "seekerprofileimageupload.action")
+	public @ResponseBody String seekerprofileimageupload(HttpSession session, @RequestParam("file") MultipartFile file)
+	{
+		String result = "";
+		
+		String fileName = file.getOriginalFilename();
+		System.out.println(fileName);
+		System.out.println(file);
+		// 세션 정보 확인
+		if (session.getAttribute("seeker") == null)
+			result = "redirect:logout.action";
+		else
+		{
+			int s_id = (int)session.getAttribute("seeker");
+			
+			ISeekerPhotoDAO seekerPhotoDAO = sqlSession.getMapper(ISeekerPhotoDAO.class);
+			IFileSaveDAO fileSaveDAO = sqlSession.getMapper(IFileSaveDAO.class);
+			
+			if (seekerPhotoDAO.search(s_id) != null)
+			{
+				// 사진이 이미 존재한다면
+				SeekerPhotoDTO dto = seekerPhotoDAO.search(s_id);
+				String originFileName = dto.getPath() + dto.getFile_name();
+				FileSaveDTO fsdto = new FileSaveDTO();
+				fsdto.setId(dto.getFile_id()); 
+				fsdto.setName(fileName);
+				
+				// 사진 경로 변경
+				fileSaveDAO.modify(fsdto);
+
+				// 실제 사진 저장
+				File newFile = new File(projectPath + dto.getPath() + fileName);
+				try
+				{
+					file.transferTo(newFile);
+				} catch (Exception e)
+				{
+					e.printStackTrace();
+				}
+				
+				// 기존 사진 삭제
+				File originFile = new File(projectPath + originFileName);
+				originFile.delete();
+				
+				// 결과 전송
+				result = dto.getPath() + fileName;
+			}
+			else
+			{
+				// 사진이 존재하지 않다면
+				FileSaveDTO fsdto = new FileSaveDTO();
+				fsdto.setFile_location_id(FileSaveDTO.SEEKER_PROFILE_PHOTO);
+				fsdto.setName(fileName);
+				
+				// 사진 경로 추가
+				int file_id = fileSaveDAO.add(fsdto);
+				SeekerPhotoDTO dto = new SeekerPhotoDTO();
+				dto.setS_id(s_id);
+				dto.setFile_id(file_id);
+				seekerPhotoDAO.add(dto);
+				
+				dto = seekerPhotoDAO.search(s_id);
+				
+				// 실제 사진 저장
+				File newFile = new File(projectPath + dto.getPath() + fileName);
+				try
+				{
+					file.transferTo(newFile);
+				} catch (Exception e)
+				{
+					e.printStackTrace();
+				}
+				
+				// 결과 전송
+				result = dto.getPath() + fileName;
+			}
 		}
 		
 		return result;
@@ -299,6 +395,7 @@ public class SeekerController
 		else
 		{
 			// 전체 공고 받아오기
+			// -> 모집 마감시간이 지나지 않은 공고만
 			IPostingInfoDAO dao = sqlSession.getMapper(IPostingInfoDAO.class);
 			
 			model.addAttribute("postingList", dao.list());
@@ -427,6 +524,54 @@ public class SeekerController
 			dao.add(dto);
 			
 			result = "redirect:postinglist.action";
+		}
+		
+		return result;
+	}
+	
+	
+	// 구직자 즐겨찾기 추가
+	@ResponseBody
+	@RequestMapping(value = "seekerbookmarkadd.action")
+	public String seekerBookmarkAdd(HttpSession session, int posting_id, String alias)
+	{
+		String result = "";
+		
+		
+		// 세션 정보 확인
+		if (session.getAttribute("seeker") == null)
+			result = "fause";
+		else
+		{
+			IPostingBookmarkDAO PBdao = sqlSession.getMapper(IPostingBookmarkDAO.class);
+			int s_id = (int)session.getAttribute("seeker");
+			PostingBookmarkDTO dto = new PostingBookmarkDTO();
+			dto.setId(posting_id);
+			dto.setPosting_id(posting_id);
+			dto.setS_id(s_id);
+			dto.setAlias(alias);
+			PBdao.add(dto);
+			
+			result = "true";
+		}
+		
+		return result;
+	}
+	
+	
+	// 구직자 즐겨찾기 삭제
+	@ResponseBody
+	@RequestMapping(value = "seekerbookmarkremove.action")
+	public String seekerBookmarkRemove(HttpSession session, int id)
+	{
+		String result = "";
+		if (session.getAttribute("seeker") == null)
+			result = "false";
+		else
+		{
+			IPostingBookmarkDAO PBdao = sqlSession.getMapper(IPostingBookmarkDAO.class);
+			PBdao.remove(id);
+			result = "true";
 		}
 		
 		return result;

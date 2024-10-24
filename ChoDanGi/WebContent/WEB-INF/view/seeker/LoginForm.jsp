@@ -15,10 +15,45 @@
 
 <script type="text/javascript" src="http://code.jquery.com/jquery.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
+<script type="text/javascript" src="<%=cp %>/js/util.js"></script>
 <script type="text/javascript">
 
 	$(function() {
+		
+		// 저장된 id 값 삽입
+		var login_id = getCookie("seeker_login_id");
+		$("#login_id").val(login_id);
+		
+		// 페이지 로딩시 저장된 id 값이 있다면
+		if($("#login_id").val() != "")
+		{
+			// 아이디 기억하기 체크상태 유지
+			$("#remember-check").attr("checked", true);
+		}
+		
+		// 아이디 저장하기 체크 수정시
+		$("#remember-check").change(function() {
+			if($("#remember-check").is(":checked"))
+			{
+				// 체크시
+				setCookie("seeker_login_id", $("#login_id").val(), 7);
+			}
+			else
+			{
+				// 체크 해제시
+				deleteCookie("seeker_login_id");
+			}
+		});
+		
+		// 아이디 저장하기 체크 상태에서 아이디 수정 시
+		$("#login_id").keyup(function() {
+			if($("#remember-check").is(":checked"))
+			{
+				setCookie("seeker_login_id", $("#login_id").val(), 7);
+			}
+		});
+		
+		
 		// 로그인 버튼 클릭
 		$("#loginBtn").click(function() {
 			var id = $("#login_id").val();

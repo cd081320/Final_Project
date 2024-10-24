@@ -9,13 +9,21 @@
 		VALUES (SEQ_SEEKER_PROFILE_PHOTO.NEXTVAL, #{s_id}, #{file_id})
 	</insert>
 	<!-- search -->
-	<select id="search" resultType="com.sist.chodangi.seeker.seekerPhotoDTO">
+	<select id="search" resultType="com.sist.chodangi.seeker.SeekerPhotoDTO">
 		SELECT ID, S_ID, FILE_ID, PATH, FILE_NAME
 		FROM FILE_VIEW
 		WHERE S_ID = #{s_id}
 	</select>
 	<!-- modify -->
-	<update id="modify"></update>
+	<update id="modify">
+		UPDATE SEEKER_PROFILE_PHOTO
+		SET FILE_ID = #{file_id}
+		WHERE ID = #{id}
+	</update>
 	<!-- remove -->
-	<delete id="remove"></delete>
+	<delete id="remove">
+		DELETE
+		FROM SEEKER_RPOFILE_PHOTO
+		WHERE ID = #{id}
+	</delete>
 </mapper>

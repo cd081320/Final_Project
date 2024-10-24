@@ -484,7 +484,7 @@
                     <a class="nav-link" href="postinglist.action">공고 리스트</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">업체 즐겨찾기</a>
+                    <a class="nav-link" href="#">즐겨찾기</a>
                 </li>
             </ul>
         </div>

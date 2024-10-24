@@ -5,6 +5,8 @@ public class FileSaveDTO
 	private int id;						// 파일 저장 번호
 	private int file_location_id;		// 파일 저장 위치 번호
 	private String name;				// 파일 제목
+	public static int SEEKER_PROFILE_PHOTO = 4;
+	public static int POSTER_PROFILE_PHOTO = 6;
 	
 	public int getId()
 	{

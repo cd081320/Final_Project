@@ -9,6 +9,8 @@
 
 	PostingInfoDTO info = (PostingInfoDTO) request.getAttribute("info");
 	String roadaddr = info.getRoadaddr();
+	
+	int posting_bookmark_id = (int)request.getAttribute("posting_bookmark_id");
 %>
 <!DOCTYPE html>
 <html>
@@ -24,37 +26,6 @@
 	src="http://code.jquery.com/jquery.min.js"></script>
 <script type="text/javascript"
 	src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<!-- <script type="text/javascript">
-	function searchPostcodeAndShowMap(postcode) {
-		var geocoder = new kakao.maps.services.Geocoder();
-
-		// 우편번호를 이용해 주소 검색
-		geocoder.addressSearch(postcode, function(result, status) {
-			if (status === kakao.maps.services.Status.OK) {
-				var coords = new kakao.maps.LatLng(result[0].y, result[0].x);
-
-				var mapContainer = document.getElementById('map'), // 지도를 표시할 div
-				mapOption = {
-					center : coords, // 지도의 중심좌표
-					level : 3
-				// 지도의 확대 레벨
-				};
-
-				var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
-
-				var marker = new kakao.maps.Marker({
-					position : coords
-				});
-				marker.setMap(map);
-			}
-		});
-	}
-
-	window.onload = function() {
-		searchPostcodeAndShowMap(postaddr);
-	};
-</script> -->
-
 <script type="text/javascript">
 	$(function() {
 	    
@@ -92,6 +63,65 @@
 	    $("#appBtn").click(function() {
 			$(location).attr("href", "seekerapplication.action?posting_id=" + ${info.id });
 		});
+	    
+	    // 만약 이미 북마크 되어 있다면 true
+	    var isCheck = false;
+	    var posting_bookmark_id = <%= posting_bookmark_id %>;
+	    if (posting_bookmark_id != null && posting_bookmark_id > 0)
+    	{
+	    	posting_bookmark_id = parseInt(posting_bookmark_id);
+		    var isCheck = true;
+    	}
+
+	    // 북마크 버튼
+	    $("#bookmarkBtn").click(function() {
+			if(!isCheck)
+			{
+				// alert("북마크 추가");
+				// 북마크 추가
+				$.ajax({
+					type : "post",
+					url :  "seekerbookmarkadd.action",
+					data : {posting_id : <%=info.getId()%>, alias : ""},
+					success : function(data) {
+						if (data == "true")
+						{
+							// 추가 성공
+							$("#bookmarkImg").attr('src', '<%=cp %>/images/bookmark-check-fill.svg');
+							isCheck = true;
+						}
+						else
+						{
+							$(location).attr("href", "logout.location");
+						}
+					},
+				});
+				
+			}
+			else
+			{
+				// alert("북마크 삭제");
+				// 북마크 삭제
+				$.ajax({
+					type : "post",
+					url :  "seekerbookmarkremove.action",
+					data : {id : posting_bookmark_id},	// 공고 즐겨찾기 번호
+					success : function(data) {
+						if (data == "true")
+						{
+							$("#bookmarkImg").attr('src', '<%=cp %>/images/bookmark-check.svg');
+							isCheck = false;				
+						}
+						else
+						{
+							$(location).attr("href", "logout.location");
+						}
+					},
+				});
+				
+			}
+				
+		})
 	    
 	 });
 	
@@ -139,7 +169,7 @@
 				<li class="nav-item"><a class="nav-link" href="oastatus.action">지원 현황</a></li>
 				<li class="nav-item"><a class="nav-link" href="scheduler.action">스케쥴러</a></li>
 				<li class="nav-item"><a class="nav-link" href="#">공고 리스트</a></li>
-				<li class="nav-item"><a class="nav-link" href="#">업체 즐겨찾기</a></li>
+				<li class="nav-item"><a class="nav-link" href="#">즐겨찾기</a></li>
 			</ul>
 		</div>
 		<a class="navbar-brand" href="logout.action">
@@ -155,6 +185,8 @@
 			<div class="panel-heading text-center my-3">
 				<span class="display-6">${info.title}</span>
 			</div>
+			
+			<i class="bi bi-bookmark-star"></i>
 
 			<div class="panel-body">
 				<table class="table table-striped">
@@ -240,16 +272,19 @@
 						<tr>
 							<td> 모집 마감 시간 </td>
 							<td>
-								<input type="text"
-										id="closing_time" name="closing_time" class="form-control"
-										readonly="readonly" value="${info.closing_time }" />
+								<input type="text" id="closing_time" name="closing_time" class="form-control"
+								 readonly="readonly" value="${info.closing_time }" />
 							</td>
 						</tr>
 						<tr class="text-center">
 							<td colspan="2">
 								<button class='btn btn-primary' id="appBtn" 
-								 ${isApp > 0 ? "class='btn btn-primary' disabled='disabled'" : "" }>지원하기</button>
+								 ${isApp > 0 ? "disabled='disabled'" : "" }>지원하기</button>
 								<a href="javascript:history.back();" role="button" class="btn btn-secondary" id="closeBtn">닫기</a>
+								<button class="btn btn-danger" id="reportBtn">신고하기</button>
+								<button type="button" class="btn" id="bookmarkBtn">
+									<img src='<%=cp%>/images/bookmark-check${posting_bookmark_id != null ? "-fill": ""}.svg' id="bookmarkImg">
+								</button>
 							</td>
 						</tr>
 

@@ -21,7 +21,7 @@
 		
 		// 공고 상세 보기
 		$(".posting").click(function() {
-			$(location).attr("href", "posting.action?id=" + $(this).val());
+			$(location).attr("href", "seekerposting.action?id=" + $(this).val());
 		});
 		
 		// 지원 취소
@@ -57,6 +57,14 @@
 			});
 		});
 		
+		// 공고 지원 수락한 구인자에 대한 최종 거절
+		$("#finalNo").click(function() {
+			$.post("seekerdeclineoffer.action", {id: $(this).val()}, function(data) {
+				alert("거절되었습니다.");
+				location.reload();
+			});
+		});
+		
 	});
 
 </script>
@@ -86,7 +94,7 @@
                     <a class="nav-link" href="postinglist.action">공고 리스트</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">업체 즐겨찾기</a>
+                    <a class="nav-link" href="#">즐겨찾기</a>
                 </li>
             </ul>
         </div>
@@ -174,7 +182,7 @@
 											<%-- 구인자 지원 수락 상태 --%>
 											<c:when test="${dto.status_id == 2 }">
 												<button type="button" class="btn btn-outline-primary btn-sm" id="finalYes" value="${dto.par_id }">최종 수락</button>
-												<button type="button" class="btn btn-outline-danger btn-sm" id="cancel" value="${dto.par_id }">최종 거절</button>
+												<button type="button" class="btn btn-outline-danger btn-sm" id="finalNo" value="${dto.par_id }">최종 거절</button>
 											</c:when>
 											<%-- 구인자 지원 거절 상태 --%>
 											<c:when test="${dto.status_id == 3 }">

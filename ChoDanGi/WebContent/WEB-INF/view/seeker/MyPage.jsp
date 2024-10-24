@@ -1,5 +1,5 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<%@ page contentType="text/html; charset=UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%
 	request.setCharacterEncoding("UTF-8");
 	String cp = request.getContextPath();
@@ -22,9 +22,36 @@
 	{
 		$("#imageBtn").click(function()
 		{
-			//alert($("#profileImage").val());
-			//--==>> C:\fakepath\alba.jpg
-			$(location).attr("href", "profileimageupload.action?profileImage=" + $("#profileImage").val());
+			// FormData 객체
+			var form = new FormData();
+			
+			// form에 추가
+			var fileInput = $("#profileImage")[0];
+			if (fileInput.files && fileInput.files.length > 0) {
+			    var file = fileInput.files[0];
+			    form.append("file", file);
+			} else {
+			    alert("파일을 선택해주세요.");
+			    return;
+			}
+				
+			$.ajax({
+				url : "seekerprofileimageupload.action",
+				type : "POST",
+				data : form,
+				processData : false,
+				contentType : false,
+				success : function(response) {
+					alert("업로드 성공");
+					$("#img").attr("src", response);
+				},
+			    error: function(jqXHR, textStatus, errorThrown) {
+			        console.log("Error details: ", jqXHR.status, textStatus, errorThrown);
+			        console.log("Response text: ", jqXHR.responseText);
+			        alert("업로드 실패: " + jqXHR.status);
+				}
+			});
+			
 		});
 		
 		// 비밀번호 변경 시 모달 켜기
@@ -121,14 +148,14 @@
 </head>
 <body>
 
-
 <div class="container-fluid">
     <nav class="navbar navbar-expand-lg bg-light">
         <a class="navbar-brand" href="seekermainpage.action">
-            <img src="<%=cp %>/images/alba.jpg" class="img-fluid" style="width: 10%; display: inline-block; vertical-align: middle;" alt="CHODANGIALBA"/>
+            <img src="<%=cp %>/images/alba.jpg"
+            class="img-fluid" style="width: 10%; display: inline-block; vertical-align: middle;" alt="CHODANGIALBA"/>
             <span class="d-inline-block align-middle ms-2" style="font-size: 28px; font-weight: bold;">CHODANGIALBA</span>
         </a>
-        <div class="collapse navbar-collapse">
+        <div class="navbar-collapse">
             <ul class="navbar-nav">
                 <li class="nav-item">
                     <a class="nav-link active" href="seekermypage.action">
@@ -145,13 +172,16 @@
                     <a class="nav-link" href="postinglist.action">공고 리스트</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">업체 즐겨찾기</a>
+                    <a class="nav-link" href="#">즐겨찾기</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="logout.action">LOGOUT</a>
                 </li>
             </ul>
         </div>
-   		<a class="navbar-brand" href="logout.action">
-		    <span class="d-inline-block align-middle ms-2" style="font-size: medium;">logout</span>
-		</a>
+
     </nav>
 </div>
 
@@ -183,9 +213,10 @@
                     <div class="mb-3 text-center">
                     	
                     	<!-- 개인 프로필 이미지 -->
-                        <img src="images/alba.jpg" class="rounded-circle" alt="Profile Picture" style="width: 150px; height: 150px; object-fit: cover;">
+                        <img src="${photo != null ? photo.path + photo.file_name : 'images/alba.jpg' }"
+                         class="rounded-circle" alt="Profile Picture" id="img" style="width: 150px; height: 150px; object-fit: cover;">
                         <div class="mb-3 text-center">
-                            <input type="file" id="profileImage" name="profileImage" class="form-control d-inline-block" style="width: auto;" />
+                            <input type="file" id="profileImage" name="profileImage" class="form-control d-inline-block" accept=".jpg, .jpeg, .png" style="width: auto;" />
                             <button type="button" class="btn btn-info" id="imageBtn">변경</button>
                         </div>
                         

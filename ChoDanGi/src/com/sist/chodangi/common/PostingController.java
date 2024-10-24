@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.sist.chodangi.seeker.IPostingApplicationDAO;
+import com.sist.chodangi.seeker.IPostingBookmarkDAO;
 import com.sist.chodangi.seeker.PostingApplicationDTO;
+import com.sist.chodangi.seeker.PostingBookmarkDTO;
 
 @Controller
 public class PostingController
@@ -18,7 +20,7 @@ public class PostingController
 	@Autowired
 	private SqlSession sqlSession;
 	
-	@RequestMapping(value = "/posting.action")
+	@RequestMapping(value = "/seekerposting.action")
 	public String postingInfo(HttpSession session, PostingInfoDTO dto, Model model)
 	{
 		String result = "";
@@ -44,6 +46,18 @@ public class PostingController
 			
 			// 지원 정보 저장
 			model.addAttribute("isApp", PAdao.search(PAdto));
+			
+			// 이미 즐겨찾기 한 공고인지 확인
+			// 즐겨찾기 되어있다면 posting_bookmark_id 추가
+			IPostingBookmarkDAO PBdao = sqlSession.getMapper(IPostingBookmarkDAO.class);
+			PostingBookmarkDTO PBdto = new PostingBookmarkDTO();
+			PBdto.setS_id(s_id);
+			PBdto.setPosting_id(posting_id);
+			int posting_bookmark_id = PBdao.search(PBdto);
+			if (PBdao.search(PBdto) > 0)
+			{
+				model.addAttribute("posting_bookmark_id", posting_bookmark_id);
+			}
 			
 			result = "seeker/Posting_Info";
 		}

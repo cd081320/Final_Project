@@ -2,6 +2,7 @@ package com.sist.chodangi.seeker;
 
 public class SeekerPhotoDTO
 {
+	
 	private int id;				// 프로필 사진 번호
 	private int s_id;			// 구직자 번호
 	private int file_id;		// 파일 번호
