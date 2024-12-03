@@ -22,11 +22,14 @@ public interface IPosterDAO
 	// 구인자 정보 추가
 	public int addPosterInfo(PosterDTO dto);
 	
-	// 구인자 공고 현황(구직자 지원한) 리스트
-	public ArrayList<PosterStatusDTO> appList(int p_id);
+	// 구인자 전체 공고 현황 리스트
+	public ArrayList<PosterStatusDTO> jobPostingList(int p_id);
 	
 	// 구인자 공고 현황(직접 제안한) 리스트
 	public ArrayList<PosterStatusDTO> offList(int p_id);
+	
+	// 구인자 해당 공고에 대한 지원자 수 확인
+	public int postingAppCount(int posting_id);
 		
 	// 구인자 마이페이지 리스트
 	public PosterDTO posterMypage(int p_id);

@@ -17,6 +17,13 @@
 		  AND POSTING_ID = #{posting_id}
 	</select>
 	
+	<!-- searchByPosting -->
+	<select id="searchByPosting" resultType="com.sist.chodangi.seeker.PostingApplicationDTO" parameterType="int">
+		SELECT ID, S_ID, POSTING_ID, APPLICATION_DATE 
+		FROM POSTING_APPLICATION
+		WHERE POSTING_ID = #{posting_id}
+	</select>
+	
 	<!-- remove -->
 	<delete id="remove">
 		DELETE

@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.sist.chodangi.seeker.IPostingApplicationDAO;
 import com.sist.chodangi.seeker.IPostingBookmarkDAO;
@@ -33,6 +32,7 @@ public class PostingController
 			IPostingInfoDAO dao = sqlSession.getMapper(IPostingInfoDAO.class);
 			dto = dao.info(dto);
 			
+			
 			// 공고 정보 저장
 			model.addAttribute("info", dto);
 			
@@ -53,11 +53,9 @@ public class PostingController
 			PostingBookmarkDTO PBdto = new PostingBookmarkDTO();
 			PBdto.setS_id(s_id);
 			PBdto.setPosting_id(posting_id);
+			
 			int posting_bookmark_id = PBdao.search(PBdto);
-			if (PBdao.search(PBdto) > 0)
-			{
-				model.addAttribute("posting_bookmark_id", posting_bookmark_id);
-			}
+			model.addAttribute("posting_bookmark_id", posting_bookmark_id);
 			
 			result = "seeker/Posting_Info";
 		}

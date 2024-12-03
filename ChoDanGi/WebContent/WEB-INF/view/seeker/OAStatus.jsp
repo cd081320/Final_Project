@@ -97,10 +97,12 @@
                     <a class="nav-link" href="#">즐겨찾기</a>
                 </li>
             </ul>
+			<ul class="navbar-nav ms-auto">
+				<li class="nav-item">
+				    <a class="nav-link" href="logout.action">LOGOUT</a>
+				</li>
+			</ul>
         </div>
-   		<a class="navbar-brand" href="logout.action">
-		    <span class="d-inline-block align-middle ms-2" style="font-size: medium;">logout</span>
-		</a>
     </nav>
 </div>
 

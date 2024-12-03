@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.sist.chodangi.common.IPostingAppResponseDAO">
+ 	<!-- add -->
+ 	<insert id="add" parameterType="com.sist.chodangi.common.PostingAppResponseDTO">
+ 		INSERT INTO POSTING_APP_RESPONSE(ID, STATUS_ID, P_APPLICATION_ID, P_ID)
+ 		VALUES(SEQ_POSTING_APP_RESPONSE.NEXTVAL, 1, #{p_application_id}, #{p_id})
+ 	</insert>
+ 	
+ 	<!-- modify -->
+ 	<update id="modify">
+ 		UPDATE POSTING_APP_RESPONSE
+ 		SET STATUS_ID = #{status_id}
+ 		WHERE ID = #{id}
+ 	</update>
+</mapper>

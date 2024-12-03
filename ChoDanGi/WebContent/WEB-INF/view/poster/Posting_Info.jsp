@@ -9,8 +9,6 @@
 
 	PostingInfoDTO info = (PostingInfoDTO) request.getAttribute("info");
 	String roadaddr = info.getRoadaddr();
-	
-	int posting_bookmark_id = (int)request.getAttribute("posting_bookmark_id");
 %>
 <!DOCTYPE html>
 <html>
@@ -59,72 +57,45 @@
 	         }
 	    });
 	    
-	    // 지원하기 버튼
-	    $("#appBtn").click(function() {
-			$(location).attr("href", "seekerapplication.action?posting_id=" + ${info.id });
+	    
+	    // 지원자 상세보기 처리
+	    $(".seekerInfo").click(function() {
+			// 모달 처리
 		});
 	    
-	    // 만약 이미 북마크 되어 있다면 true
-	    var isCheck = false;
-	    var posting_bookmark_id = <%= posting_bookmark_id %>;
-	    if (posting_bookmark_id != null && posting_bookmark_id > 0)
-    	{
-	    	posting_bookmark_id = parseInt(posting_bookmark_id);
-		    var isCheck = true;
-    	}
-
-	    // 북마크 버튼
-	    $("#bookmarkBtn").click(function() {
-			if(!isCheck)
+	    // 지원자 수락 처리
+	    $(".yes").click(function() {
+			const id = parseInt($(this).val());
+			const yesButton = $(this); // 수락 버튼
+			
+			// 수락 처리 ajax
+			if(confirm("정말로 이 지원을 수락하시겠습니까?"))
 			{
-				// alert("북마크 추가");
-				// 북마크 추가
 				$.ajax({
-					type : "post",
-					url :  "seekerbookmarkadd.action",
-					data : {posting_id : <%=info.getId()%>, alias : ""},
-					success : function(data) {
-						if (data == "true")
-						{
-							// 추가 성공
-							$("#bookmarkImg").attr('src', '<%=cp %>/images/bookmark-check-fill.svg');
-							isCheck = true;
-						}
-						else
-						{
-							$(location).attr("href", "logout.location");
-						}
+					url : "seekeracceptajax.action",
+					type : "POST",
+					data : {id : id},
+					success : function() {
+						alert("지원자를 수락하였습니다.");
+						
+						// 수락 비활성화
+						yesButton.prop("disabled", true);
 					},
+					error : function() {
+						alert("수락 처리에 실패했습니다.");
+					}
 				});
-				
 			}
-			else
-			{
-				// alert("북마크 삭제");
-				// 북마크 삭제
-				$.ajax({
-					type : "post",
-					url :  "seekerbookmarkremove.action",
-					data : {id : posting_bookmark_id},	// 공고 즐겨찾기 번호
-					success : function(data) {
-						if (data == "true")
-						{
-							$("#bookmarkImg").attr('src', '<%=cp %>/images/bookmark-check.svg');
-							isCheck = false;				
-						}
-						else
-						{
-							$(location).attr("href", "logout.location");
-						}
-					},
-				});
-				
-			}
-				
-		})
+			
+			
+		});
+	    
+	    // 지원자 거절 처리
+	    $(".no").click(function() {
+			
+		});
 	    
 	 });
-	
 </script>
 
 <script type="text/javascript" src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
@@ -143,41 +114,45 @@
                 
             }
         }).open();
-        
-       
     }
 </script>
-
 </head>
 <body>
 
 <div class="container-fluid">
-	<nav class="navbar navbar-expand-lg bg-light">
-		<a class="navbar-brand" href="seekermainpage.action"> <img
-			src="<%=cp%>/images/alba.jpg" class="img-fluid"
-			style="width: 10%; display: inline-block; vertical-align: middle;"
-			alt="CHODANGIALBA" /> <span
-			class="d-inline-block align-middle ms-2"
-			style="font-size: 28px; font-weight: bold;">CHODANGIALBA</span>
-		</a>
-		<div class="collapse navbar-collapse">
-			<ul class="navbar-nav">
-				<li class="nav-item">
-					<a class="nav-link active" href="seekermypage.action">
-					<img src="<%=cp%>/images/my.png" style="width: 20px; height: 20px;" alt="MY PAGE" /> MY PAGE</a>
-				</li>
-				<li class="nav-item"><a class="nav-link" href="oastatus.action">지원 현황</a></li>
-				<li class="nav-item"><a class="nav-link" href="scheduler.action">스케쥴러</a></li>
-				<li class="nav-item"><a class="nav-link" href="#">공고 리스트</a></li>
-				<li class="nav-item"><a class="nav-link" href="#">즐겨찾기</a></li>
-			</ul>
-			<ul class="navbar-nav ms-auto">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="mainpage.action">
+            <img src="<%=cp %>/images/alba.jpg" class="img-fluid" style="width: 10%; display: inline-block; vertical-align: middle;" alt="CHODANGIALBA"/>
+            <h1 class="d-inline-block align-middle ms-2">CHODANGIALBA</h1>
+        </a>
+        <div class="navbar-collapse">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="postermypage.action?loginId=${loginId }">
+                        <img src="<%=cp %>/images/my.png" style="width: 20px; height: 20px;" alt="MY PAGE"/> MY PAGE
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="#">공고 현황</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="postinginsertform.action">공고 작성</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="posterbookmark.action">구직자 즐겨찾기</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">평가리스트</a>
+                </li>
+            </ul>
+            <!-- 오른쪽 끝에 로그아웃 버튼 -->
+            <ul class="navbar-nav ms-auto">
                 <li class="nav-item">
                     <a class="nav-link" href="logout.action">LOGOUT</a>
                 </li>
             </ul>
-		</div>
-	</nav>
+        </div>
+    </nav>
 </div>
 
 
@@ -185,11 +160,8 @@
 	<div class="panel-group">
 		<div class="panel panel-default">
 			<div class="panel-heading text-center my-3">
-				<span class="display-6">${info.title}</span>
+				<span class="display-6">${info.title }</span>
 			</div>
-			
-			<i class="bi bi-bookmark-star"></i>
-
 			<div class="panel-body">
 				<table class="table table-striped">
 					<tbody>
@@ -280,23 +252,80 @@
 						</tr>
 						<tr class="text-center">
 							<td colspan="2">
-								<button class='btn btn-primary' id="appBtn" 
-								 ${isApp > 0 ? "disabled='disabled'" : "" }>지원하기</button>
+								<button class='btn btn-primary' id="appBtn">수정</button>
 								<a href="javascript:history.back();" role="button" class="btn btn-secondary" id="closeBtn">닫기</a>
-								<button class="btn btn-danger" id="reportBtn">신고하기</button>
-								<button type="button" class="btn" id="bookmarkBtn">
-									<img src='<%=cp%>/images/bookmark-check${posting_bookmark_id != null ? "-fill": ""}.svg' id="bookmarkImg">
-								</button>
 							</td>
 						</tr>
-
 					</tbody>
 				</table>
 			</div>
+			<hr>
+			<!-- 해당 공고를 지원한 지원자 상세 정보들 -->
+			<!-- 해당 영역에서 수락하면 수락버튼이 비활성화 -->
+			<div class="panel-body">
+				<div class="row">
+					<span class="text-center fw-bold fs-5">해당 공고에 대한 지원자</span>
+				</div>
+				<div class="row">
+					<div class="col text-center">닉네임</div>
+					<div class="col text-center">종합 평균 점수</div>
+					<div class="col text-center">정보</div>
+				</div>
+				<c:forEach var="dto" items="${appList }">
+				<div class="row">
+					<div class="col text-center">
+						${dto.nickname }
+					</div>
+					<div class="col text-center">
+						${dto.score }
+					</div>
+					<div class="col text-center">
+						<button class="btn btn-success seekerInfo" value="${dto.s_id }">상세보기</button>
+						<!-- 이미 수락했으면 비활성화 수정필요 -->
+						<button class="btn btn-primary yes" value="${dto.p_application_id }" ${dto.status_id == 0 ? 'disabled="disabled"' : '' }>수락</button>
+						<button class="btn btn-danger no" value="${dto.p_application_id }">거절</button>
+					</div>
+				</div>
+				</c:forEach>
+			</div>
+			<br>
+			<hr>
+			<!-- 해당공고로 제안한 지원자들 -->
+			<div class="panel-body">
+				<div class="row">
+					<span class="text-center fw-bold fs-5">내가 제안한 지원자</span>
+				</div>
+				<div class="row">
+					<div class="col text-center">닉네임</div>
+					<div class="col text-center">종합 평균 점수</div>
+					<div class="col text-center">정보</div>
+				</div>
+				<c:forEach var="dto" items="">
+				<div class="row">
+					<div class="col text-center">
+						
+					</div>
+					<div class="col text-center">
+						
+					</div>
+					<div class="col text-center">
+						<button class="btn btn-success seekerInfo" value="">상세보기</button>
+						<button class="btn btn-primary yes" value="">최종 수락</button>
+						<button class="btn btn-danger no" value="">최종 거절</button>
+					</div>
+				</div>
+				</c:forEach>
+			</div>
+
+			
 		</div>
 	</div>
 </div>
 
+
+<br><br>
+<br><br>
+<br><br>
 
 </body>
 </html>

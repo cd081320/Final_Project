@@ -55,7 +55,8 @@
 		
 		
 		// 로그인 버튼 클릭
-		$("#loginBtn").click(function() {
+		$("#login-form").on("submit", function() {
+			event.preventDefault();
 			var id = $("#login_id").val();
 			var pw = $("#login_pw").val();
 			
@@ -123,18 +124,19 @@
 			
 			<!-- 로그인 버튼 -->
 			<div class="col-sm-2">
-				<button type="button" class="btn btn-success justify-content-center" 
+				<button type="submit" class="btn btn-success justify-content-center" 
 				style="width: 100%; height: 100%;" id="loginBtn">Login</button>
 			</div>
 		</div>
 			
-		<div class="mb-1">
-			<label for="remember-check" class="form-check-label">아이디 저장하기</label>
-			<input class="form-check-input" type="checkbox" id="remember-check">
-		</div>
-		
-		
 	</form>
+		
+		
+	<div class="mb-1">
+		<label for="remember-check" class="form-check-label">아이디 저장하기</label>
+		<input class="form-check-input" type="checkbox" id="remember-check">
+		<span class="text-danger small" role="alert" id="loginAlert"></span>
+	</div>
 	
 	<div id="links" class="mb-3 text-end">
 		<a role="btn" href="seekersignupform.action" class="btn btn-secondary">구직자 회원가입</a>

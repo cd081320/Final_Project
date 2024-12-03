@@ -9,13 +9,19 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>JobpostingStatus.jsp</title>
+<title>공고 현황</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 <script type="text/javascript" src="http://code.jquery.com/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
 <script type="text/javascript">
-
+	$(function() {
+		// 지원자 상세 버튼 클릭
+		$(".infoBtn").click(function() {
+			// p_id를 post 방식으로 전송
+			$(location).attr("href", "myposterinfo.action?posting_id=" + $(this).val());
+		});
+	});
 </script>
 
 </head>
@@ -57,33 +63,6 @@
     </nav>
 </div>
 
-<!-- 
-    1. bg-
-	용도: 배경 색상 설정
-	예시: bg-primary, bg-success, bg-danger
-	bg-primary는 부트스트랩의 기본 색상 중 하나인 파란색 배경을 적용합니다.
-	bg-success는 성공을 나타내는 녹색 배경을 적용합니다.
-	bg-danger는 경고를 나타내는 빨간색 배경을 적용합니다.
-	2. mt-
-	용도: 상단 여백 (margin-top) 설정
-	예시: mt-1, mt-3, mt-5
-	mt-1은 상단 여백을 최소값으로 설정합니다.
-	mt-3은 중간 크기의 상단 여백을 설정합니다.
-	mt-5는 최대 크기의 상단 여백을 설정합니다.
-	3. mb-
-	용도: 하단 여백 (margin-bottom) 설정
-	예시: mb-1, mb-3, mb-5
-	mb-1은 하단 여백을 최소값으로 설정합니다.
-	mb-3은 중간 크기의 하단 여백을 설정합니다.
-	mb-5는 최대 크기의 하단 여백을 설정합니다.
-	4. my-
-	용도: 상하 여백 (margin-top과 margin-bottom) 설정
-	예시: my-1, my-3, my-5
-	my-1은 상하 여백을 최소값으로 설정합니다.
-	my-3은 중간 크기의 상하 여백을 설정합니다.
-	my-5는 최대 크기의 상하 여백을 설정합니다.
--->
-
 <!-- 공고 목록 -->
 <div class="container my-4">
 	<div class="row">
@@ -91,7 +70,7 @@
 			<div class="card mb-4">
 				<div class="card-header">
 					<div>
-						<span class="text-primary">공고 현황</span>
+						<span class="text-primary">내 공고 현황</span>
 					</div>
 				</div>
 				<div class="card-body">
@@ -113,7 +92,7 @@
 			</div>
 		
 			<div class="row">
-				<c:forEach var="dto" items="${appList }">
+				<c:forEach var="dto" items="${jobPostingList }">
 					<div class="col-md-6 mb-4">
 						<div class="card">
 							<div class="card-header">
@@ -154,8 +133,8 @@
 								</div>
 							</div>
 							<div class="card-footer d-flex justify-content-between">
-								<button type="button" class="btn btn-outline-success btn-sm posting" value="${dto.p_id }">지원자 상세</button>
-								<button type="button" class="btn btn-outline-danger btn-sm" id="cancel" value="">공고 삭제</button>
+								<button type="button" class="btn btn-outline-success btn-sm infoBtn" value="${dto.p_id }">지원자 상세</button>
+								<button type="button" class="btn btn-outline-danger btn-sm cancelBtn" value="">공고 삭제</button>
 							</div>
 						</div>
 					</div>
@@ -164,7 +143,7 @@
 		</div>
 		
 		
-				<div class="col">
+		<div class="col">
 			<div class="card mb-4">
 				<div class="card-header">
 					<div>
@@ -232,13 +211,22 @@
 							</div>
 							<div class="card-footer d-flex justify-content-between">
 								<button type="button" class="btn btn-outline-success btn-sm posting" value="${dto.p_id }">ㅎㅇ</button>
-								<button type="button" class="btn btn-outline-primary btn-sm" id="yes" value="${dto.por_id }">수락</button>
-								<button type="button" class="btn btn-outline-danger btn-sm" id="no" value="${dto.por_id }">거절</button>
+								<button type="button" class="btn btn-outline-primary btn-sm yes" value="${dto.por_id }">수락</button>
+								<button type="button" class="btn btn-outline-danger btn-sm no" value="${dto.por_id }">거절</button>
 							</div>
 						</div>
 					</div>
 				</c:forEach>
 			</div>
+			
+			<!-- 제안하러가기 -->
+			<div class="card">
+				<div class="card-header text-center">
+					<a href="" class="">제안하러가기</a>
+				</div>
+			</div>
+			
+			
 		</div>
 		
 		

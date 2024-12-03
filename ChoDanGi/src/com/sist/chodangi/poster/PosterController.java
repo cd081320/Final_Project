@@ -1,5 +1,9 @@
 package com.sist.chodangi.poster;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import javax.servlet.http.HttpSession;
 
 import org.apache.ibatis.session.SqlSession;
@@ -9,8 +13,17 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.sist.chodangi.common.IPostingAppResponseDAO;
+import com.sist.chodangi.common.IPostingInfoDAO;
+import com.sist.chodangi.common.PostingAppResponseDTO;
+import com.sist.chodangi.common.PostingInfoDTO;
+import com.sist.chodangi.seeker.IPostingApplicationDAO;
+import com.sist.chodangi.seeker.ISeekerInfoDAO;
+import com.sist.chodangi.seeker.PostingApplicationDTO;
 import com.sist.chodangi.seeker.SeekerDTO;
+import com.sist.chodangi.seeker.SeekerInfoDTO;
 
 @Controller
 public class PosterController
@@ -112,10 +125,9 @@ public class PosterController
 	}
 	
 	// 구인자 공고 확인 상태 페이지 요청
-	@RequestMapping(value = "/jobpostingstatus.action", method = RequestMethod.GET)
+	@RequestMapping(value = "/jobpostingstatus.action")
 	public String JobPostingStatus(Model model, HttpSession session)
 	{
-		IPosterDAO dao = sqlsession.getMapper(IPosterDAO.class);
 		String result = "";
 		
 		if (session.getAttribute("poster") == null)
@@ -127,9 +139,11 @@ public class PosterController
 			//--==>>Poster ID: 1
 			
 			
+			IPosterDAO dao = sqlsession.getMapper(IPosterDAO.class);
 			PosterDTO dto = dao.posterMypage(p_id);
+
 			model.addAttribute("loginId", dto.getLogin_id());
-			model.addAttribute("appList", dao.appList(p_id));
+			model.addAttribute("jobPostingList", dao.jobPostingList(p_id));
 			model.addAttribute("offList", dao.offList(p_id));
 			result = "poster/JobpostingStatus";
 		}
@@ -539,6 +553,77 @@ public class PosterController
 		return result;
 	}
 	
+	// 구인자 자기 공고 및 지원자 확인
+	@RequestMapping(value = "myposterinfo.action")
+	public String myPostingInfo(HttpSession session, int posting_id, Model model)
+	{
+		String result = "";
+		
+		// 세션 정보 확인
+		if (session.getAttribute("poster") == null)
+			result = "redirect:logout.action";
+		else
+		{
+			IPostingInfoDAO PIdao = sqlsession.getMapper(IPostingInfoDAO.class);
+			PostingInfoDTO PIdto = new PostingInfoDTO();
+			PIdto.setId(posting_id);
+			PIdto = PIdao.info(PIdto);
+			// 구인자가 올린 공고인지 확인
+			
+			// 공고 정보
+			model.addAttribute("info", PIdto);
+			
+			
+			// 공고에 지원한 지원자 -> POSTING_APPLICATION
+			IPostingApplicationDAO PAdao = sqlsession.getMapper(IPostingApplicationDAO.class);
+			ArrayList<PostingApplicationDTO> PAdtoList = PAdao.searchByPosting(posting_id);
+			
+			// 지원자가 있다면
+			if(PAdtoList != null)
+			{
+				ArrayList<SeekerInfoDTO> SIdtoList = new ArrayList<SeekerInfoDTO>();
+				for (Iterator iterator = PAdtoList.iterator(); iterator.hasNext();)
+				{
+					PostingApplicationDTO PAdto = (PostingApplicationDTO) iterator.next();
+					
+					// 각 지원자 아이디 확보
+					int s_id = PAdto.getS_id();
+					
+					// 지원자 필요 정보 가져오기
+					// 닉네임, 평가정보, 수락 여부 및 수락 시점
+					ISeekerInfoDAO SIdao = sqlsession.getMapper(ISeekerInfoDAO.class);
+					SIdtoList.add(SIdao.search(s_id));
+				}
+				
+				// 모델에 저장
+				model.addAttribute("appList", SIdtoList);
+			}
+			
+			// 공고로 제안한 지원자 -> POSTING_OFFER
+			
+			
+			result = "poster/Posting_Info";
+		}
+		
+		return result;
+	}
 	
+	// 공고에 지원한 구직자 수락 ajax
+	@RequestMapping(value = "seekeracceptajax.action")
+	public @ResponseBody String seekerAcceptAjax(HttpSession session, int id)
+	{
+		String result = "";
+		
+		int p_id = (int)session.getAttribute("poster");
+		IPostingAppResponseDAO PARdao = sqlsession.getMapper(IPostingAppResponseDAO.class);
+		PostingAppResponseDTO dto = new PostingAppResponseDTO();
+		
+		dto.setP_application_id(id);
+		dto.setP_id(p_id);
+		
+		PARdao.add(dto);
+		
+		return result;
+	}
 
 }

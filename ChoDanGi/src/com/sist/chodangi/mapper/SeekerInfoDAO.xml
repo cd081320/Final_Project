@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.sist.chodangi.seeker.ISeekerInfoDAO">
+ 	<!-- search -->
+ 	<!-- 구직자 아이디로 닉네임, 종합 평가정보(총 평균) 확인 -->
+ 	<select id="search" resultType="com.sist.chodangi.seeker.SeekerInfoDTO">
+		SELECT PA.ID AS p_application_id 
+		     , S.ID AS s_id
+		     , SI.NICKNAME AS nickname
+			 , (SELECT NVL(AVG(SE.SCORE), 0) 
+				FROM SEEKER_EVALUATION SE 
+				WHERE S.ID = SE.S_ID) AS score
+		FROM SEEKER S, SEEKER_INFO SI, POSTING_APPLICATION PA
+		WHERE S.ID = SI.S_ID
+		  AND S.ID = PA.S_ID
+		  AND S.ID = #{s_id}
+ 	</select>
+</mapper>

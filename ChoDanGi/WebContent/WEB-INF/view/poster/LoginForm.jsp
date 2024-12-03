@@ -94,7 +94,8 @@
 			
 			<!-- 로그인 버튼 -->
 			<div class="col-sm-2 text-center">
-				<button type="submit" class="btn btn-success" style="width: 100%; height: 100%;">Login</button>
+				<button type="submit" class="btn btn-success" 
+				style="width: 100%; height: 100%;">Login</button>
 			</div>
 		</div>
 			
