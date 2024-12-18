@@ -4,6 +4,7 @@ public class SeekerInfoDTO
 {
 	// 구직자 본인의 닉네임 및 종합 평가정보 등 구인자가 한눈에 필요로 하는 정보들
 	private int p_application_id;	// 공고 지원 아이디
+	private int par_id;				// 공고 지원 응답 아이디
 	private int s_id;
 	private int status_id;
 	private String nickname;
@@ -13,6 +14,14 @@ public class SeekerInfoDTO
 	
 	
 	
+	public int getPar_id()
+	{
+		return par_id;
+	}
+	public void setPar_id(int par_id)
+	{
+		this.par_id = par_id;
+	}
 	public int getStatus_id()
 	{
 		return status_id;

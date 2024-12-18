@@ -2,8 +2,12 @@ package com.sist.chodangi.common;
 
 public class CompanyEvalDTO
 {
-	private String name;
-	private int score, posting_id, c_id, s_id, evaluation_id;
+	private String name;		// 평가제목
+	private int score;			// 평가점수
+	private int posting_id;		// 공고번호
+	private int c_id;			// 회사번호
+	private int s_id;			// 구직자번호
+	private int evaluation_id;	// 평가번호
 	
 	
 	public String getName()

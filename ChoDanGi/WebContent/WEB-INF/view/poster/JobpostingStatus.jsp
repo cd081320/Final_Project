@@ -219,14 +219,6 @@
 				</c:forEach>
 			</div>
 			
-			<!-- 제안하러가기 -->
-			<div class="card">
-				<div class="card-header text-center">
-					<a href="" class="">제안하러가기</a>
-				</div>
-			</div>
-			
-			
 		</div>
 		
 		

@@ -8,6 +8,7 @@ public interface IOpenApplicationDAO
 {
 //	public ArrayList<OpenApplicationDTO> list();
 	public ArrayList<OpenApplicationDTO> list(int s_id);
+	public ArrayList<OpenApplicationDTO> fullList();
 	public int add(OpenApplicationDTO dto);
 	public int remove(int id);
 }

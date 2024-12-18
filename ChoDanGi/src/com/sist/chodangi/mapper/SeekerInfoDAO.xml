@@ -7,14 +7,16 @@
  	<!-- 구직자 아이디로 닉네임, 종합 평가정보(총 평균) 확인 -->
  	<select id="search" resultType="com.sist.chodangi.seeker.SeekerInfoDTO">
 		SELECT PA.ID AS p_application_id 
+			 , PAR.ID AS par_id
 		     , S.ID AS s_id
 		     , SI.NICKNAME AS nickname
 			 , (SELECT NVL(AVG(SE.SCORE), 0) 
 				FROM SEEKER_EVALUATION SE 
 				WHERE S.ID = SE.S_ID) AS score
-		FROM SEEKER S, SEEKER_INFO SI, POSTING_APPLICATION PA
+		FROM SEEKER S, SEEKER_INFO SI, POSTING_APPLICATION PA, POSTING_APP_RESPONSE PAR
 		WHERE S.ID = SI.S_ID
 		  AND S.ID = PA.S_ID
+		  AND PA.ID = PAR.P_APPLICATION_ID
 		  AND S.ID = #{s_id}
  	</select>
 </mapper>

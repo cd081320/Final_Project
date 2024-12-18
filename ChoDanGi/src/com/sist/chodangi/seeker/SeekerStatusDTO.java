@@ -11,6 +11,7 @@ public class SeekerStatusDTO
 	private int count;				// 조회수
 	private int headcount;			// 모집인원
 	private int hourly_wage;		// 시급
+	private int eval_check;			// 설문참여여부
 	private String title;			// 제목
 	private String closing_time;	// 마감 시간
 	private String work_start_time;	// 시작 시간
@@ -19,6 +20,16 @@ public class SeekerStatusDTO
 	private String state;			// 상태
 	private String company_name;	// 회사명
 	
+
+	public int getEval_check()
+	{
+		return eval_check;
+	}
+
+	public void setEval_check(int eval_check)
+	{
+		this.eval_check = eval_check;
+	}
 
 	public int getStatus_id()
 	{

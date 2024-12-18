@@ -196,6 +196,7 @@
 		        </div>
 		        <div class="list-group">
 		            <a href="seekermypage.action" class="list-group-item list-group-item-action active">마이페이지 수정</a>
+		            <a href="seekermyhistory.action" class="list-group-item list-group-item-action">히스토리</a>
 		            <a href="#" class="list-group-item list-group-item-action">test</a>
 		        </div>
 		    </div>

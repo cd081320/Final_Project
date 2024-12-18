@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.sist.chodangi.seeker.ISeekerHistoryDAO">
+ 	<!-- list -->
+ 	<!-- 전체 목록 확인용 -->
+ 	<!-- 각 히스토리마다 공고번호, 제목, 업체명, 근무시작-마감시간 -->
+ 	<select id="list" resultType="com.sist.chodangi.seeker.SeekerHistoryDTO">
+ 		SELECT P.ID AS posting_id
+ 		     , P.TITLE AS title
+ 		     , C.NAME AS company_name
+ 		     , P.WORK_START_TIME AS work_start_time
+ 		     , P.WORK_END_TIME AS work_end_time
+ 		FROM POSTING P, POSTER_COMPANY_INFO PCI, COMPANY C, POSTING_APPLICATION PA, POSTING_APP_RESPONSE PAR
+ 		WHERE PA.ID = PAR.P_APPLICATION_ID
+ 		  AND P.ID = PA.POSTING_ID
+ 		  AND PCI.ID = P.P_COMPANY_INFO_ID
+ 		  AND C.ID = PCI.C_ID
+		  AND PAR.STATUS_ID = 100
+ 		  AND PA.S_ID = #{s_id}
+		UNION
+ 		SELECT P.ID AS posting_id
+ 		     , P.TITLE AS posting_title
+ 		     , C.NAME AS company_name
+ 		     , P.WORK_START_TIME AS work_start_time
+ 		     , P.WORK_END_TIME AS work_end_time
+ 		FROM POSTING P, POSTER_COMPANY_INFO PCI, COMPANY C, POSTING_OFFER PO, POSTING_OFF_RESPONSE POR, OPEN_APPLICATION OA
+ 		WHERE PO.ID = POR.OFFER_ID
+		  AND OA.ID = PO.OPEN_APPLICATION_ID
+ 		  AND P.ID = PO.POSTING_ID
+ 		  AND PCI.ID = P.P_COMPANY_INFO_ID
+ 		  AND C.ID = PCI.C_ID
+		  AND POR.STATUS_ID = 100
+ 		  AND OA.S_ID = #{s_id}
+ 	</select>
+</mapper>

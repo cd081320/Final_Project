@@ -1,9 +1,7 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
-	request.setCharacterEncoding("UTF-8");
-	String cp = request.getContextPath();
-	
+    request.setCharacterEncoding("UTF-8");
+    String cp = request.getContextPath();
 %>
 <!DOCTYPE html>
 <html>
@@ -17,102 +15,98 @@
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script type="text/javascript" src="<%=cp %>/js/util.js"></script>
 <script type="text/javascript">
+    $(function() {
+        // 저장된 id 값 삽입
+        var login_id = getCookie("poster_login_id");
+        $("#login_id").val(login_id);
 
-	$(function() {
-		// 저장된 id 값 삽입
-		var login_id = getCookie("poster_login_id");
-		$("#login_id").val(login_id);
-		
-		// 페이지 로딩시 저장된 id 값이 있다면
-		if($("#login_id").val() != "")
-		{
-			// 아이디 기억하기 체크상태 유지
-			$("#remember-check").attr("checked", true);
-		}
-		
-		// 아이디 저장하기 체크 수정시
-		$("#remember-check").change(function() {
-			if($("#remember-check").is(":checked"))
-			{
-				// 체크시
-				setCookie("poster_login_id", $("#login_id").val(), 7);
-			}
-			else
-			{
-				// 체크 해제시
-				deleteCookie("poster_login_id");
-			}
-		});
-		
-		// 아이디 저장하기 체크 상태에서 아이디 수정 시
-		$("#login_id").keyup(function() {
-			if($("#remember-check").is(":checked"))
-			{
-				setCookie("poster_login_id", $("#login_id").val(), 7);
-			}
-		});
-	});
+        // 페이지 로딩 시 저장된 id 값이 있다면
+        if ($("#login_id").val() != "") {
+            $("#remember-check").attr("checked", true);
+        }
 
+        // 아이디 저장하기 체크 수정 시
+        $("#remember-check").change(function() {
+            if ($("#remember-check").is(":checked")) {
+                // 체크 시
+                setCookie("poster_login_id", $("#login_id").val(), 7);
+            } else {
+                // 체크 해제 시
+                deleteCookie("poster_login_id");
+            }
+        });
+
+        // 아이디 저장하기 체크 상태에서 아이디 수정 시
+        $("#login_id").keyup(function() {
+            if ($("#remember-check").is(":checked")) {
+                setCookie("poster_login_id", $("#login_id").val(), 7);
+            }
+        });
+    });
 </script>
 </head>
 <body>
 
-<div class="container border bg-light">
-	<h2 class="text-center">구인자 로그인</h2>
+<div class="container-fluid">
+    <nav class="navbar navbar-expand-lg bg-light">
+        <a class="navbar-brand" href="seekermainpage.action">
+            <img src="<%=cp %>/images/alba.jpg" class="img-fluid" style="width: 10%; display: inline-block; vertical-align: middle;" alt="CHODANGIALBA"/>
+            <span class="d-inline-block align-middle ms-2" style="font-size: 28px; font-weight: bold;">CHODANGIALBA</span>
+        </a>
+    </nav>
 </div>
-<div class="container border">
-
-	<div class="text-center mb-3 mt-3">
-		<div class="nav nav-tabs">
-			<div class="nav-item">
-				<a href="loginform.action?memberType=seeker" class="nav-link">구직자</a>
-			</div>
-			<div class="nav-item">
-				<a href="loginform.action?memberType=poster" class="nav-link active">구인자</a>
-			</div>
-			<div class="nav-item">
-				<a href="loginform.action?memberType=admin" class="nav-link">관리자</a>
-			</div>
-		</div>
-	</div>
+<br /><br />
+<br /><br />
+<div class="d-flex align-items-center justify-content-center">
+	<div class="container" style="max-width: 400px;">
+	    <div class="card shadow-sm">
+	        <div class="card-header text-center bg-primary text-white">
+	            <h3>구인자 로그인</h3>
+	        </div>
+	        <div class="card-body">
+	            <!-- 구직자, 구인자, 관리자 탭 -->
+	            <div class="mb-3 text-center">
+	                <ul class="nav nav-tabs justify-content-center">
+	                    <li class="nav-item">
+	                        <a href="loginform.action?memberType=seeker" class="nav-link">구직자</a>
+	                    </li>
+	                    <li class="nav-item">
+	                        <a href="loginform.action?memberType=poster" class="nav-link active">구인자</a>
+	                    </li>
+	                    <li class="nav-item">
+	                        <a href="loginform.action?memberType=admin" class="nav-link">관리자</a>
+	                    </li>
+	                </ul>
+	            </div>
 	
-	<form method="post" action="posterlogin.action" id="login-form">
-		<!-- 아이디 패스워드 폼 -->
-		<div class="row mb-3">
-			<div class="col-sm-10">
-				<div class="row g-3">
-					<div class="form-floating">
-						<input type="text" id="login_id" name="login_id" class="form-control" placeholder="ID"> 
-						<label for="login_id">ID</label>
-					</div>
-					<div class="form-floating">
-						<input type="password" id="login_pw" name="login_pw" class="form-control" placeholder="Password">
-						<label for="login_pw">PW</label>
-					</div>					
-				</div>
-			</div>
-			
-			<!-- 로그인 버튼 -->
-			<div class="col-sm-2 text-center">
-				<button type="submit" class="btn btn-success" 
-				style="width: 100%; height: 100%;">Login</button>
-			</div>
-		</div>
-			
-		<div class="mb-1">
-			<label for="remember-check">아이디 저장하기</label>
-			<input class="form-check-input" type="checkbox" id="remember-check">
-		</div>
-	</form>
-
-	<div id="links" class="mb-3 text-end">
-		<a role="btn" href="postersignupform.action" class="btn btn-secondary">구인자 회원가입</a>
-		<a role="btn" href="posterfindidform.action" class="btn btn-secondary">아이디 찾기</a>
-		<a role="btn" href="posterchangepwform.action" class="btn btn-secondary">비밀번호 변경</a>
+	            <form method="post" action="posterlogin.action" id="login-form">
+	                <!-- 아이디 필드 -->
+	                <div class="form-floating mb-3">
+	                    <input type="text" id="login_id" name="login_id" class="form-control" placeholder="ID">
+	                    <label for="login_id">ID</label>
+	                </div>
+	                <!-- 비밀번호 필드 -->
+	                <div class="form-floating mb-3">
+	                    <input type="password" id="login_pw" name="login_pw" class="form-control" placeholder="Password">
+	                    <label for="login_pw">PW</label>
+	                </div>
+	                <!-- 아이디 저장 체크박스 -->
+	                <div class="form-check mb-3">
+	                    <input class="form-check-input" type="checkbox" id="remember-check">
+	                    <label for="remember-check" class="form-check-label">아이디 저장하기</label>
+	                </div>
+	                <!-- 로그인 버튼 -->
+	                <button type="submit" class="btn btn-primary w-100">로그인</button>
+	            </form>
+	        </div>
+	        <div class="card-footer text-center">
+	            <a href="postersignupform.action" class="btn btn-link">회원가입</a>
+	            <a href="posterfindidform.action" class="btn btn-link">아이디 찾기</a>
+	            <a href="posterchangepwform.action" class="btn btn-link">비밀번호 변경</a>
+	        </div>
+	    </div>
 	</div>
-	
 </div>
 
-	
 </body>
 </html>

@@ -30,4 +30,13 @@
 		FROM POSTING_APPLICATION
 		WHERE ID = #{id}
 	</delete>
+	
+	<!-- searchPId -->
+	<select id="searchPId">
+		SELECT PI.P_ID AS P_ID
+		FROM POSTING P, POSTER_COMPANY_INFO PCI, POSTER_INFO PI
+		WHERE P.P_COMPANY_INFO_ID = PCI.ID
+		  AND PCI.P_INFO_ID = PI.ID 
+		  AND P.ID = #{posting_id}
+	</select>
 </mapper>

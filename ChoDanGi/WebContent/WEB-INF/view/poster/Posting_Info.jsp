@@ -65,7 +65,7 @@
 	    
 	    // 지원자 수락 처리
 	    $(".yes").click(function() {
-			const id = parseInt($(this).val());
+			const par_id = parseInt($(this).val());
 			const yesButton = $(this); // 수락 버튼
 			
 			// 수락 처리 ajax
@@ -74,7 +74,7 @@
 				$.ajax({
 					url : "seekeracceptajax.action",
 					type : "POST",
-					data : {id : id},
+					data : {par_id : par_id},
 					success : function() {
 						alert("지원자를 수락하였습니다.");
 						
@@ -95,9 +95,16 @@
 			
 		});
 	    
-	 });
+	    // 제안하러가기
+	    $(".offer").click(function() {
+	    	// 팝업 창으로 이동
+	    	const url = "offerlist.action?posting_id=" + ${info.id};
+	        const popupOptions = "width=800, height=600, scrollbars=yes";
+			window.open(url, "OfferList", popupOptions);
+		});
+	    
+	});
 </script>
-
 <script type="text/javascript" src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <!-- 주소 검색, 지도 표시 기능 구현 -->
 <script type="text/javascript">	
@@ -260,6 +267,12 @@
 				</table>
 			</div>
 			<hr>
+			<!-- 제안하러가기 -->
+			<div class="card">
+				<div class="card-header text-center">
+					<a class="offer">제안하러가기</a>
+				</div>
+			</div>
 			<!-- 해당 공고를 지원한 지원자 상세 정보들 -->
 			<!-- 해당 영역에서 수락하면 수락버튼이 비활성화 -->
 			<div class="panel-body">
@@ -282,8 +295,8 @@
 					<div class="col text-center">
 						<button class="btn btn-success seekerInfo" value="${dto.s_id }">상세보기</button>
 						<!-- 이미 수락했으면 비활성화 수정필요 -->
-						<button class="btn btn-primary yes" value="${dto.p_application_id }" ${dto.status_id == 0 ? 'disabled="disabled"' : '' }>수락</button>
-						<button class="btn btn-danger no" value="${dto.p_application_id }">거절</button>
+						<button class="btn btn-primary yes" value="${dto.par_id }" ${dto.status_id == 2 ? 'disabled="disabled"' : '' }>수락</button>
+						<button class="btn btn-danger no" value="${dto.par_id }">거절</button>
 					</div>
 				</div>
 				</c:forEach>

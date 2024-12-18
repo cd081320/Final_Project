@@ -15,4 +15,17 @@
  		SET STATUS_ID = #{status_id}
  		WHERE ID = #{id}
  	</update>
+ 	
+ 	<!-- searchHistory -->
+ 	<select id="search" resultType="com.sist.chodangi.common.PostingAppResponseDTO">
+ 		SELECT PAR.ID AS id
+ 		     , PAR.STATUS_ID AS status_id
+ 		     , PAR.P_APPLICATION_ID AS p_application_id
+ 		     , PAR.P_ID AS p_id
+ 		     , PAR.RESPONSE_DATE AS response_date
+ 		     , PAS.STATE AS state 
+ 		FROM POSTING_APP_RESPONSE PAR, POSTING_APP_STATUS PAS
+ 		WHERE PAS.ID = PAR.STATUS_ID
+ 		  AND ID = #{id}
+ 	</select>
 </mapper>

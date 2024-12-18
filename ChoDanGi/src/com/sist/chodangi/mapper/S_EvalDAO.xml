@@ -8,6 +8,7 @@
 		SELECT ID, NAME
 		FROM SEEKER_EVALUATION_LIST
 	</select>
+	
 	<insert id="add">
 		INSERT INTO SEEKER_EVALUATION(ID, POSTING_ID, P_ID, S_ID, ITEM_ID, SCORE)
 		VALUES (SEQ_SEEKER_EVALUATION.NEXTVAL, #{posting_id}, #{p_id}, #{s_id}, #{item_id}, #{score})

@@ -1,7 +1,6 @@
 package com.sist.chodangi.seeker;
 
 import java.io.File;
-import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -20,7 +19,9 @@ import com.sist.chodangi.common.ICategoryDAO;
 import com.sist.chodangi.common.IFileSaveDAO;
 import com.sist.chodangi.common.ILocationDAO;
 import com.sist.chodangi.common.IOpenApplicationDAO;
+import com.sist.chodangi.common.IPostingAppResponseDAO;
 import com.sist.chodangi.common.IPostingInfoDAO;
+import com.sist.chodangi.common.PostingAppResponseDTO;
 
 @Controller
 public class SeekerController
@@ -505,7 +506,7 @@ public class SeekerController
 	
 	// 구직자 공고 지원
 	@RequestMapping(value = "seekerapplication.action")
-	public String seekerApplication(HttpSession session, PostingApplicationDTO dto)
+	public String seekerApplication(HttpSession session, PostingApplicationDTO PAdto)
 	{
 		String result = "";
 		
@@ -516,12 +517,22 @@ public class SeekerController
 		{
 			int s_id = (int)session.getAttribute("seeker");
 			
-			IPostingApplicationDAO dao = sqlSession.getMapper(IPostingApplicationDAO.class);
-			
-			dto.setS_id(s_id);
-
 			// POSTING_APPLICATION INSERT
-			dao.add(dto);
+			IPostingApplicationDAO PAdao = sqlSession.getMapper(IPostingApplicationDAO.class);
+			
+			PAdto.setS_id(s_id);
+
+			PAdao.add(PAdto);
+			
+			// POSTING_APPLICATION_RESPONSE INSERT
+			IPostingAppResponseDAO PARdao = sqlSession.getMapper(IPostingAppResponseDAO.class);
+			
+			int posting_id = PAdto.getPosting_id();
+			PostingAppResponseDTO PARdto = new PostingAppResponseDTO();
+			PARdto.setP_id(PAdao.searchPId(posting_id));
+			PARdto.setP_application_id(PAdto.getId());
+			
+			PARdao.add(PARdto);
 			
 			result = "redirect:postinglist.action";
 		}
@@ -574,6 +585,61 @@ public class SeekerController
 			result = "true";
 		}
 		
+		return result;
+	}
+	
+	
+	// 구직자 최종 수락
+	@RequestMapping(value = "seekerfinalaccept.action")
+	public String seekerFinalAccept(HttpSession session, int par_id)
+	{
+		String result = "";
+		if (session.getAttribute("seeker") == null)
+			result = "false";
+		else
+		{
+			IPostingAppResponseDAO PARdao = sqlSession.getMapper(IPostingAppResponseDAO.class);
+			PARdao.modify(par_id, 4);
+		}
+		
+		return result;
+	}
+	
+	
+	// 구직자 최종 거절
+	@RequestMapping(value = "seekerfinaldecline.action")
+	public String seekerFinalDecline(HttpSession session, int par_id)
+	{
+		String result = "";
+		if (session.getAttribute("seeker") == null)
+			result = "false";
+		else
+		{
+			IPostingAppResponseDAO PARdao = sqlSession.getMapper(IPostingAppResponseDAO.class);
+			PARdao.modify(par_id, 5);
+		}
+		return result;
+	}
+	
+	// 구직자 히스토리
+	@RequestMapping(value = "seekermyhistory.action")
+	public String seekerMyHistory(HttpSession session, Model model)
+	{
+		String result = "";
+		
+		if (session.getAttribute("seeker") == null)
+			result = "false";
+		else
+		{
+			int s_id = (int)session.getAttribute("seeker");
+			// 히스토리 가져오기
+			// 응답상태가 FINISHED인 공고 지원 응답
+			ISeekerHistoryDAO SHdao = sqlSession.getMapper(ISeekerHistoryDAO.class);
+			
+			model.addAttribute("list", SHdao.list(s_id));
+			
+			result = "seeker/MyHistory";
+		}
 		return result;
 	}
 }

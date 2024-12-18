@@ -2,8 +2,8 @@ package com.sist.chodangi.seeker;
 
 public class PostingApplicationDTO
 {
-	// 공고 지원 번호
-	private int id;			
+	
+	private int id;			// 공고 지원 번호
 	private int s_id;		// 구직자 번호
 	private int posting_id;	// 공고 번호
 	

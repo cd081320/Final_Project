@@ -15,12 +15,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.sist.chodangi.common.IOpenApplicationDAO;
 import com.sist.chodangi.common.IPostingAppResponseDAO;
 import com.sist.chodangi.common.IPostingInfoDAO;
 import com.sist.chodangi.common.PostingAppResponseDTO;
 import com.sist.chodangi.common.PostingInfoDTO;
 import com.sist.chodangi.seeker.IPostingApplicationDAO;
 import com.sist.chodangi.seeker.ISeekerInfoDAO;
+import com.sist.chodangi.seeker.OpenApplicationDTO;
 import com.sist.chodangi.seeker.PostingApplicationDTO;
 import com.sist.chodangi.seeker.SeekerDTO;
 import com.sist.chodangi.seeker.SeekerInfoDTO;
@@ -582,10 +584,8 @@ public class PosterController
 			if(PAdtoList != null)
 			{
 				ArrayList<SeekerInfoDTO> SIdtoList = new ArrayList<SeekerInfoDTO>();
-				for (Iterator iterator = PAdtoList.iterator(); iterator.hasNext();)
-				{
-					PostingApplicationDTO PAdto = (PostingApplicationDTO) iterator.next();
-					
+				for (PostingApplicationDTO PAdto : PAdtoList)
+				{					
 					// 각 지원자 아이디 확보
 					int s_id = PAdto.getS_id();
 					
@@ -610,20 +610,51 @@ public class PosterController
 	
 	// 공고에 지원한 구직자 수락 ajax
 	@RequestMapping(value = "seekeracceptajax.action")
-	public @ResponseBody String seekerAcceptAjax(HttpSession session, int id)
+	public @ResponseBody String seekerAcceptAjax(HttpSession session, int par_id)
 	{
 		String result = "";
 		
-		int p_id = (int)session.getAttribute("poster");
+		// 공고 지원 응답 상태 값 변화
+		// 1(미응답) -> 2(수락) 
 		IPostingAppResponseDAO PARdao = sqlsession.getMapper(IPostingAppResponseDAO.class);
-		PostingAppResponseDTO dto = new PostingAppResponseDTO();
-		
-		dto.setP_application_id(id);
-		dto.setP_id(p_id);
-		
-		PARdao.add(dto);
+		PARdao.modify(par_id, 2);
 		
 		return result;
 	}
 
+	// 해당 공고로 제안하기
+	@RequestMapping(value = "offerlist.action")
+	public String offerList(HttpSession session, int posting_id, Model model)
+	{
+		String result = "";
+		
+		// 세션 정보 확인
+		if (session.getAttribute("poster") == null)
+			result = "redirect:logout.action";
+		else
+		{
+			// 전체 오픈지원서 불러오기
+			IOpenApplicationDAO OAdao = sqlsession.getMapper(IOpenApplicationDAO.class);
+			ArrayList<OpenApplicationDTO> fullList = OAdao.fullList();
+			
+			// 내 공고 정보 불러오기
+			IPostingInfoDAO PIdao = sqlsession.getMapper(IPostingInfoDAO.class);
+			PostingInfoDTO postingInfo = new PostingInfoDTO();
+			postingInfo.setId(posting_id);
+			postingInfo = PIdao.info(postingInfo);
+			
+			// 오픈지원서중 내 공고 시간에 맞는 지원서
+			ArrayList<OpenApplicationDTO> offerList = new ArrayList<OpenApplicationDTO>();
+			for (OpenApplicationDTO OAdto : fullList)
+			{
+				System.out.println(OAdto.getStart_date());
+				System.out.println(OAdto.getEnd_date());
+			}
+			
+			
+			result = "Poster/OfferList";
+		}
+		
+		return result;
+	}
 }

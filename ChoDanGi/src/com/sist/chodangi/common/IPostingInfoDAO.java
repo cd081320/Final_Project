@@ -4,7 +4,9 @@ import java.util.ArrayList;
 
 public interface IPostingInfoDAO
 {
+	// posting_id(id)로 공고 하나 검색
 	public PostingInfoDTO info(PostingInfoDTO dto);
+	
 	// 구직자에게 보여줄 공고 리스트
 	public ArrayList<PostingInfoDTO> list();
 }

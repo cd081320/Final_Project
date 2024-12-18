@@ -12,7 +12,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>지원/제안 현황</title>
 <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-
 <script type="text/javascript" src="http://code.jquery.com/jquery.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script type="text/javascript">
@@ -25,7 +24,7 @@
 		});
 		
 		// 지원 취소
-		$("#cancel").click(function() {
+		$(".cancel").click(function() {
 			$.post("seekercancelapplication.action", {posting_id: $(this).val(), s_id: <%=(int)session.getAttribute("seeker") %>}, function(data) {
 				alert("지원을 취소하였습니다.");
 				location.reload();
@@ -33,7 +32,7 @@
 		});
 		
 		// 수락
-		$("#yes").click(function() {
+		$(".yes").click(function() {
 			$.post("seekeracceptoffer.action", {id: $(this).val()}, function(data) {
 				alert("수락되었습니다.");
 				location.reload();
@@ -41,7 +40,7 @@
 		});
 		
 		// 거절 및 공고 지원 수락한 구인자에 대한 최종 거절
-		$("#no").click(function() {
+		$(".no").click(function() {
 			
 			$.post("seekerdeclineoffer.action", {id: $(this).val()}, function(data) {
 				alert("거절되었습니다.");
@@ -50,16 +49,16 @@
 		});
 		
 		// 공고 지원 수락한 구인자에 대한 최종 수락
-		$("#finalYes").click(function() {
-			$.post("seekerfinalaccept.action", {id: $(this).val()}, function() {
+		$(".finalYes").click(function() {
+			$.post("seekerfinalaccept.action", {par_id: $(this).val()}, function() {
 				alert("최종 수락 되었습니다.");
 				location.reload();
 			});
 		});
 		
 		// 공고 지원 수락한 구인자에 대한 최종 거절
-		$("#finalNo").click(function() {
-			$.post("seekerdeclineoffer.action", {id: $(this).val()}, function(data) {
+		$(".finalNo").click(function() {
+			$.post("seekerfinaldecline.action", {par_id: $(this).val()}, function() {
 				alert("거절되었습니다.");
 				location.reload();
 			});
@@ -68,6 +67,64 @@
 	});
 
 </script>
+
+<script type="text/javascript">
+    $(function() {
+        function calculateStatus(closingTime, startTime, endTime) {
+            const now = new Date();
+            const closing = new Date(closingTime);
+            const start = new Date(startTime);
+            const end = new Date(endTime);
+
+            if (now < start) {
+                return "알바 시작 전";
+            } else if (now >= start && now <= end) {
+                return "알바 진행 중";
+            } else if (now > end) {
+                return "설문하기";
+            } else {
+                return "시간 정보 없음";
+            }
+        }
+
+        // 상태 업데이트
+        $(".status-check").each(function() {
+            const closingTime = $(this).data("closing");
+            const startTime = $(this).data("start");
+            const endTime = $(this).data("end");
+            const par_id = $(this).data("par_id");
+            
+            const status = calculateStatus(closingTime, startTime, endTime);
+            
+           	if (status === "설문하기")
+       		{
+           		const container = $(this).closest(".card-footer");
+           		
+                // 상태 텍스트 제거
+                $(this).closest(".form-control").remove();
+       			container.append('<button type="button" class="btn btn-outline-primary btn-sm survey-btn">'+ status + '</button>');
+       		
+       		}
+           	else
+       		{
+           		$(this).text(status);
+       		}
+        });
+
+        // 설문하기 버튼 클릭 이벤트
+		$(".survey-btn").on("click", function() {
+			// 회사번호
+			const c_id = $(".c_id").val();
+			// 공고번호
+			const p_id = $(".p_id").val();
+			// 공고지원응답 번호
+			const par_id = $(".par_id").val();
+		    
+			$(location).attr("href", "c_evaluationform.action?c_id=" + c_id + "&p_id=" + p_id + "&par_id=" + par_id);
+		});
+    });
+</script>
+
 </head>
 <body>
 
@@ -116,24 +173,7 @@
 						<span class="text-primary">지원 현황</span>
 					</div>
 				</div>
-				<div class="card-body">
-				<!-- 
-					<div class="d-flex justify-content-between">
-						<div class="badge-container">
-							<span class="badge bg-secondary"> 채용 대기 </span> 
-							<span class="badge bg-secondary">0</span> 
-							<span class="badge bg-danger"> 채용 마감 </span> 
-							<span class="badge bg-secondary">0</span> 
-							<span class="badge bg-primary"> 채용 중 </span> 
-							<span class="badge bg-secondary">0</span> 
-							<span class="badge bg-primary"> 근무 대기 </span> 
-							<span class="badge bg-secondary">0</span> 
-							<span class="badge bg-success"> 근무 완료 </span> 
-							<span class="badge bg-secondary">0</span>
-						</div>
-					</div>
-					 -->
-				
+				<div class="card-body">				
 					<div class="row">
 						<c:forEach var="dto" items="${appList }">
 							<div class="col-md-6 mb-4">
@@ -176,24 +216,45 @@
 										</div>
 									</div>
 									<div class="card-footer d-flex justify-content-between">
+										<input type="text" class="c_id" value="${dto.c_id }" style="display: none;"/>
+										<input type="text" class="p_id" value="${dto.p_id }" style="display: none;"/>
+										<input type="text" class="par_id" value="${dto.par_id }" style="display: none;"/>
 										<button type="button" class="btn btn-outline-success btn-sm posting" value="${dto.p_id }">공고 상세</button>
 										<!-- 1. 지원만 했을 때 == 상대방이 미응답일 때  -> 응답 테이블에 데이터가 없음 -->
 										<!-- 2. 지원을 했고 상대방이 수락했을 때 -> 응답 테이블에 데이터가 있음 -->
 										<!-- 3. 지원을 했고 상대방이 거절했을 때 -> 응답 테이블에 데이터가 있음 -->
 										<c:choose>
+											<%-- 구인자 지원 미응답 상태 --%>
+											<c:when test="${dto.status_id == 1 }">
+												<button type="button" class="btn btn-outline-danger btn-sm cancel" value="${dto.p_id }">지원 취소</button>
+											</c:when>
 											<%-- 구인자 지원 수락 상태 --%>
 											<c:when test="${dto.status_id == 2 }">
-												<button type="button" class="btn btn-outline-primary btn-sm" id="finalYes" value="${dto.par_id }">최종 수락</button>
-												<button type="button" class="btn btn-outline-danger btn-sm" id="finalNo" value="${dto.par_id }">최종 거절</button>
+												<button type="button" class="btn btn-outline-primary btn-sm finalYes" value="${dto.par_id }">최종 수락</button>
+												<button type="button" class="btn btn-outline-danger btn-sm finalNo" value="${dto.par_id }">최종 거절</button>
 											</c:when>
 											<%-- 구인자 지원 거절 상태 --%>
 											<c:when test="${dto.status_id == 3 }">
-												<button type="button" class="btn btn-outline-secondary btn-sm" id="">삭제</button>
+												<button type="button" class="btn btn-outline-secondary btn-sm delAns">삭제</button>
 											</c:when>
-											<%-- 지원자 지원 미응답 상태 --%>
-											<c:otherwise>
-												<button type="button" class="btn btn-outline-danger btn-sm" id="cancel" value="${dto.p_id }">지원 취소</button>
-											</c:otherwise>
+											<%-- 최종 수락 상태 --%>
+											<c:when test="${dto.status_id == 4 }">
+												<%-- 1. 최종수락 -> 알바시작시간 --%>
+												<%-- 2. 알바시작시간 -> 알바종료시간 --%>
+												<%-- 3. 알바종료시간 -> 설문 안내 --%>
+												<%-- 4. 설문 종료 --%>
+											    <div class="form-control">
+											   		
+											        <span class="text-black">현재 상태 :</span> 
+											        <span class="badge bg-secondary status-check"
+											              data-closing="${dto.closing_time}" 
+											              data-start="${dto.work_start_time}" 
+											              data-end="${dto.work_end_time}"
+											              data-par_id="${dto.par_id }">
+											              상태 확인 중...
+											        </span>
+											    </div>
+											</c:when>
 										</c:choose>
 									</div>
 								</div>
@@ -256,8 +317,8 @@
 									</div>
 									<div class="card-footer d-flex justify-content-between">
 										<button type="button" class="btn btn-outline-success btn-sm posting" value="${dto.p_id }">공고 상세</button>
-										<button type="button" class="btn btn-outline-primary btn-sm" id="yes" value="${dto.por_id }">수락</button>
-										<button type="button" class="btn btn-outline-danger btn-sm" id="no" value="${dto.por_id }">거절</button>
+										<button type="button" class="btn btn-outline-primary btn-sm yes" value="${dto.por_id }">수락</button>
+										<button type="button" class="btn btn-outline-danger btn-sm no" value="${dto.por_id }">거절</button>
 									</div>
 								</div>
 							</div>

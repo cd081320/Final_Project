@@ -2,8 +2,12 @@ package com.sist.chodangi.seeker;
 
 public class SeekerEvalDTO
 {
-	private String name;
-	private int score, posting_id, p_id, s_id, item_id;
+	private String name;		// 이름
+	private int score;			// 점수
+	private int posting_id;		// 공고번호
+	private int p_id;			// 구인자 번호
+	private int s_id;			// 구직자 번호
+	private int item_id;		// 항목 번호
 	
 	
 	public int getPosting_id()
