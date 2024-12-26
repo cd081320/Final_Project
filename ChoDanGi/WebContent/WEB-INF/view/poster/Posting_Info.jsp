@@ -99,7 +99,7 @@
 	    $(".offer").click(function() {
 	    	// 팝업 창으로 이동
 	    	const url = "offerlist.action?posting_id=" + ${info.id};
-	        const popupOptions = "width=800, height=600, scrollbars=yes";
+	        const popupOptions = "width=1000, height=800, scrollbars=yes";
 			window.open(url, "OfferList", popupOptions);
 		});
 	    

@@ -11,7 +11,45 @@ public class OpenApplicationDTO
 	private String end_date;		// 근무 종료 시간
 	private String create_date;		// 작성 일자
 	private String view_count;		// 조회수
+	private String name;			// 구직자 이름
+	private String tel;				// 전화번호
+	private String email;			// 이메일
+	private boolean offerd;			// 제안여부
 	
+	
+
+	public boolean isOfferd()
+	{
+		return offerd;
+	}
+	public void setOfferd(boolean offerd)
+	{
+		this.offerd = offerd;
+	}
+	public String getName()
+	{
+		return name;
+	}
+	public void setName(String name)
+	{
+		this.name = name;
+	}
+	public String getTel()
+	{
+		return tel;
+	}
+	public void setTel(String tel)
+	{
+		this.tel = tel;
+	}
+	public String getEmail()
+	{
+		return email;
+	}
+	public void setEmail(String email)
+	{
+		this.email = email;
+	}
 	public int getId()
 	{
 		return id;

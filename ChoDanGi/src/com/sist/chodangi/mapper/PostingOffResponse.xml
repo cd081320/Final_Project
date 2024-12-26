@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.sist.chodangi.common.IPostingOffResponseDAO">
+ 	<!-- add -->
+ 	<insert id="add" parameterType="com.sist.chodangi.common.PostingOffResponseDTO">
+ 		INSERT INTO POSTING_OFF_RESPONSE(ID, STATUS_ID, OFFER_ID, S_ID)
+ 		VALUES(SEQ_POSTING_OFF_RESPONSE.NEXTVAL, 1, #{offer_id}, #{s_id})
+		<selectKey order="AFTER" resultType="int" keyProperty="id">
+			SELECT SEQ_POSTING_OFF_RESPONSE.CURRVAL FROM DUAL
+		</selectKey>
+ 	</insert>
+ 	
+ 	<!-- modify -->
+ 	<update id="modify" parameterType="com.sist.chodangi.common.PostingOffResponseDTO">
+ 		UPDATE POSTING_OFF_RESPONSE
+ 		SET STATUS_ID = #{status_id}
+ 		WHERE ID = #{id}
+ 	</update>
+</mapper>

@@ -5,14 +5,27 @@
 <mapper namespace="com.sist.chodangi.common.IOpenApplicationDAO">
 	<!-- list -->
 	<!-- 전체 리스트 -->
+	<!-- 추후 제안을 이미 한 사람은 제외하는 기능 추가 -->
 	<select id="fullList" resultType="com.sist.chodangi.seeker.OpenApplicationDTO">
-		SELECT ID, S_ID, LOCATION_ID
-		     , TO_CHAR(CLOSING_DATE, 'YYYY-MM-DD HH24:MI') AS CLOSING_DATE
-		     , TO_CHAR(START_DATE, 'YYYY-MM-DD HH24:MI') AS START_DATE
-		     , TO_CHAR(END_DATE, 'YYYY-MM-DD HH24:MI') AS END_DATE
-		     , TO_CHAR(CREATE_DATE, 'YYYY-MM-DD HH24:MI') AS CREATE_DATE
-		     , VIEW_COUNT
-		FROM OPEN_APPLICATION
+		SELECT OA.ID, OA.S_ID, OA.LOCATION_ID
+		     , TO_CHAR(OA.CLOSING_DATE, 'YYYY-MM-DD HH24:MI') AS CLOSING_DATE
+		     , TO_CHAR(OA.START_DATE, 'YYYY-MM-DD HH24:MI') AS START_DATE
+		     , TO_CHAR(OA.END_DATE, 'YYYY-MM-DD HH24:MI') AS END_DATE
+		     , TO_CHAR(OA.CREATE_DATE, 'YYYY-MM-DD HH24:MI') AS CREATE_DATE
+		     , OA.VIEW_COUNT
+		     , SI.NAME AS NAME
+		     , SI.TEL AS TEL
+		     , SI.EMAIL AS EMAIL
+		     , (CASE 
+          		WHEN EXISTS (SELECT 1 
+		             FROM POSTING_OFFER PO 
+		             WHERE OA.ID = PO.OPEN_APPLICATION_ID)
+		        THEN 1
+		        ELSE 0
+		        END) AS OFFERD
+		FROM OPEN_APPLICATION OA, SEEKER S, SEEKER_INFO SI
+		WHERE OA.S_ID = S.ID
+		  AND SI.S_ID = S.ID
 	</select>
 	
 	<!-- list -->

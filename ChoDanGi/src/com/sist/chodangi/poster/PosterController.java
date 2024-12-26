@@ -1,13 +1,18 @@
 package com.sist.chodangi.poster;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,8 +23,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.sist.chodangi.common.IOpenApplicationDAO;
 import com.sist.chodangi.common.IPostingAppResponseDAO;
 import com.sist.chodangi.common.IPostingInfoDAO;
+import com.sist.chodangi.common.IPostingOffResponseDAO;
 import com.sist.chodangi.common.PostingAppResponseDTO;
 import com.sist.chodangi.common.PostingInfoDTO;
+import com.sist.chodangi.common.PostingOffResponseDTO;
 import com.sist.chodangi.seeker.IPostingApplicationDAO;
 import com.sist.chodangi.seeker.ISeekerInfoDAO;
 import com.sist.chodangi.seeker.OpenApplicationDTO;
@@ -622,7 +629,7 @@ public class PosterController
 		return result;
 	}
 
-	// 해당 공고로 제안하기
+	// 해당 공고로 제안가능한 리스트
 	@RequestMapping(value = "offerlist.action")
 	public String offerList(HttpSession session, int posting_id, Model model)
 	{
@@ -643,18 +650,70 @@ public class PosterController
 			postingInfo.setId(posting_id);
 			postingInfo = PIdao.info(postingInfo);
 			
-			// 오픈지원서중 내 공고 시간에 맞는 지원서
+			// 공고의 시작 및 종료 시간
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+	        LocalDateTime workStartTime = LocalDateTime.parse(postingInfo.getWork_start_time(), formatter);
+	        LocalDateTime workEndTime = LocalDateTime.parse(postingInfo.getWork_end_time(), formatter);
+			
+			// 오픈지원서중 내 공고 시간을 포함하는 지원서
 			ArrayList<OpenApplicationDTO> offerList = new ArrayList<OpenApplicationDTO>();
+			
+			
 			for (OpenApplicationDTO OAdto : fullList)
 			{
-				System.out.println(OAdto.getStart_date());
-				System.out.println(OAdto.getEnd_date());
+				// 아직 제안하지 않은 경우
+				if (!OAdto.isOfferd())
+				{
+					// 지원서의 시작 및 종료 시간
+					LocalDateTime applicantStartTime = LocalDateTime.parse(OAdto.getStart_date(), formatter);
+					LocalDateTime applicantEndTime = LocalDateTime.parse(OAdto.getEnd_date(), formatter);
+					
+					// 조건: 지원서의 시간이 공고 시간을 포함할 경우
+					if (applicantStartTime.isBefore(workStartTime) && applicantEndTime.isAfter(workEndTime)) 
+						offerList.add(OAdto);
+				}
 			}
 			
+			// 필터링된 리스트 전달
+			model.addAttribute("offerList", offerList);
+			model.addAttribute("posting_id", posting_id);
 			
-			result = "Poster/OfferList";
+			result = "poster/OfferList";
 		}
 		
 		return result;
 	}
+	
+	// 제안 ajax
+	@RequestMapping(value = "posteroffer.action", method = RequestMethod.POST)
+	@ResponseBody
+	public String posterOffer(int posting_id, int open_application_id, HttpSession session, HttpServletResponse response) 
+	{
+	    if (session.getAttribute("poster") == null) {
+	        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401 상태 설정
+	        return "세션 정보가 없습니다.";
+	    }
+
+	    try {
+	        int s_id = (int) session.getAttribute("poster");
+
+	        // POSTING_OFFER 추가
+	        IPostingOfferDAO POdao = sqlsession.getMapper(IPostingOfferDAO.class);
+	        PostingOfferDTO POdto = new PostingOfferDTO(posting_id, open_application_id);
+	        int offer_id = POdao.add(POdto);
+
+	        // POSTING_OFF_RESPONSE 추가
+	        IPostingOffResponseDAO PORdao = sqlsession.getMapper(IPostingOffResponseDAO.class);
+	        PostingOffResponseDTO PORdto = new PostingOffResponseDTO();
+	        PORdto.setS_id(s_id);
+	        PORdto.setOffer_id(offer_id);
+	        PORdao.add(PORdto);
+
+	        return "제안이 성공적으로 처리되었습니다.";
+	    } catch (Exception e) {
+	        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+	        return "처리 중 오류가 발생했습니다.";
+	    }
+	}
+
 }
